@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Enums\UsuarioEstatus;
 use App\Exceptions\ApiException;
 use App\Models\Usuario;
 use Illuminate\Support\Facades\Hash;
@@ -16,7 +17,7 @@ class AuthService
             ->with('roles.permisos')
             ->first();
 
-        if (! $usuario || ! Hash::check($password, $usuario->password_hash)) {
+        if (! $usuario || ! Hash::check($password, $usuario->getAuthPassword())) {
             throw new ApiException('Credenciales inválidas.', 401);
         }
 
@@ -54,24 +55,29 @@ class AuthService
             throw new ApiException('Tu usuario está inactivo.', 403);
         }
 
-        if ($usuario->estatus === Usuario::ESTATUS_BLOQUEADO) {
+        if ($usuario->estatus === UsuarioEstatus::BLOQUEADO) {
             throw new ApiException('Tu usuario está bloqueado.', 403);
         }
 
-        if ($usuario->estatus !== Usuario::ESTATUS_ACTIVO) {
+        if ($usuario->estatus !== UsuarioEstatus::ACTIVO) {
             throw new ApiException('Tu usuario no tiene permitido iniciar sesión.', 403);
         }
     }
 
     private function buildAuthPayload(Usuario $usuario, ?string $token = null): array
     {
-        return [
-            'token' => $token,
+        $payload = [
             'usuario' => $usuario,
             'auth' => [
                 'roles' => $usuario->clavesRoles(),
                 'permisos' => $usuario->permisosEfectivos(),
             ],
         ];
+
+        if ($token !== null) {
+            $payload['token'] = $token;
+        }
+
+        return $payload;
     }
 }

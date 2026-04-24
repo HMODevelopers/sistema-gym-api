@@ -1,0 +1,18 @@
+<?php
+
+namespace App\Enums;
+
+enum AuditoriaAccion: string
+{
+    case CREAR = 'CREAR';
+    case EDITAR = 'EDITAR';
+    case CAMBIAR_ESTATUS = 'CAMBIAR_ESTATUS';
+    case RENOVAR_MEMBRESIA = 'RENOVAR_MEMBRESIA';
+    case REGISTRAR_PAGO = 'REGISTRAR_PAGO';
+    case CANCELAR_PAGO = 'CANCELAR_PAGO';
+    case ENROLAR_HUELLA = 'ENROLAR_HUELLA';
+    case VALIDAR_ACCESO = 'VALIDAR_ACCESO';
+    case DENEGAR_ACCESO = 'DENEGAR_ACCESO';
+    case AJUSTAR = 'AJUSTAR';
+    case ELIMINAR_LOGICO = 'ELIMINAR_LOGICO';
+}

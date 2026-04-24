@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\UsuarioEstatus;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -12,9 +13,6 @@ class Usuario extends Authenticatable
 {
     use HasApiTokens;
     use HasFactory;
-
-    public const ESTATUS_ACTIVO = 'ACTIVO';
-    public const ESTATUS_BLOQUEADO = 'BLOQUEADO';
 
     protected $table = 'usuarios';
 
@@ -35,11 +33,13 @@ class Usuario extends Authenticatable
 
     protected $hidden = [
         'password_hash',
+        'remember_token',
     ];
 
     protected function casts(): array
     {
         return [
+            'estatus' => UsuarioEstatus::class,
             'activo' => 'boolean',
             'ultimo_acceso_at' => 'datetime',
             'created_at' => 'datetime',
@@ -68,7 +68,7 @@ class Usuario extends Authenticatable
         $this->loadMissing('roles.permisos');
 
         return $this->roles
-            ->flatMap(fn (Rol $rol) => $rol->permisos->pluck('clave'))
+            ->flatMap(static fn (Rol $rol) => $rol->permisos->pluck('clave'))
             ->unique()
             ->sort()
             ->values()
