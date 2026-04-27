@@ -6,6 +6,7 @@ use App\Enums\UsuarioEstatus;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Support\Collection;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Laravel\Sanctum\HasApiTokens;
 
@@ -63,12 +64,41 @@ class Usuario extends Authenticatable
             ->withTimestamps();
     }
 
+    public function permisos(): Collection
+    {
+        $this->loadMissing('roles.permisos');
+
+        return $this->roles
+            ->filter(static fn (Rol $rol) => $rol->activo)
+            ->flatMap(static fn (Rol $rol) => $rol->permisos->where('activo', true))
+            ->unique('id')
+            ->values();
+    }
+
+    public function hasPermission(string $permission): bool
+    {
+        if (! $this->activo) {
+            return false;
+        }
+
+        return $this->roles()
+            ->where('roles.activo', true)
+            ->whereHas('permisos', function ($query) use ($permission): void {
+                $query->where('permisos.activo', true)
+                    ->where('permisos.clave', $permission);
+            })
+            ->exists();
+    }
+
     public function permisosEfectivos(): array
     {
         $this->loadMissing('roles.permisos');
 
         return $this->roles
-            ->flatMap(static fn (Rol $rol) => $rol->permisos->pluck('clave'))
+            ->filter(static fn (Rol $rol) => $rol->activo)
+            ->flatMap(static fn (Rol $rol) => $rol->permisos
+                ->where('activo', true)
+                ->pluck('clave'))
             ->unique()
             ->sort()
             ->values()
@@ -80,6 +110,7 @@ class Usuario extends Authenticatable
         $this->loadMissing('roles');
 
         return $this->roles
+            ->filter(static fn (Rol $rol) => $rol->activo)
             ->pluck('clave')
             ->unique()
             ->sort()

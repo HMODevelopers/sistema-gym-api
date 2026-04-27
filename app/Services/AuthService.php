@@ -37,7 +37,15 @@ class AuthService
         $usuario->loadMissing('roles.permisos');
         $this->validarEstatus($usuario);
 
-        return $this->buildAuthPayload($usuario);
+        return [
+            'usuario' => [
+                'id' => $usuario->id,
+                'nombre' => $usuario->nombre,
+                'email' => $usuario->email,
+            ],
+            'roles' => $usuario->clavesRoles(),
+            'permisos' => $usuario->permisosEfectivos(),
+        ];
     }
 
     public function logout(Usuario $usuario): void
