@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Enums\UsuarioEstatus;
 use App\Exceptions\ApiException;
+use App\Http\Resources\Auth\UsuarioAuthResource;
 use App\Models\Usuario;
 use Illuminate\Support\Facades\Hash;
 
@@ -37,15 +38,7 @@ class AuthService
         $usuario->loadMissing('roles.permisos');
         $this->validarEstatus($usuario);
 
-        return [
-            'usuario' => [
-                'id' => $usuario->id,
-                'nombre' => $usuario->nombre,
-                'email' => $usuario->email,
-            ],
-            'roles' => $usuario->clavesRoles(),
-            'permisos' => $usuario->permisosEfectivos(),
-        ];
+        return $this->buildAuthPayload($usuario);
     }
 
     public function logout(Usuario $usuario): void
@@ -75,7 +68,7 @@ class AuthService
     private function buildAuthPayload(Usuario $usuario, ?string $token = null): array
     {
         $payload = [
-            'usuario' => $usuario,
+            'usuario' => new UsuarioAuthResource($usuario),
             'auth' => [
                 'roles' => $usuario->clavesRoles(),
                 'permisos' => $usuario->permisosEfectivos(),

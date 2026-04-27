@@ -35,7 +35,7 @@ class AuthController extends Controller
         $payload = $this->authService->me($usuario);
 
         return response()->json([
-            'message' => 'Usuario autenticado obtenido correctamente.',
+            'message' => 'Usuario autenticado.',
             'data' => $payload,
         ]);
     }
