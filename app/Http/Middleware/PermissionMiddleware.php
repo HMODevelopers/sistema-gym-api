@@ -10,12 +10,16 @@ use Symfony\Component\HttpFoundation\Response;
 
 class PermissionMiddleware
 {
-    public function handle(Request $request, Closure $next, string $permission): Response
+    public function handle(Request $request, Closure $next, ?string $permission = null): Response
     {
         $usuario = $request->user();
 
         if (! $usuario instanceof Usuario) {
             throw new ApiException('No autenticado.', 401);
+        }
+
+        if ($permission === null || trim($permission) === '') {
+            throw new ApiException('Permiso no configurado para esta ruta.', 403);
         }
 
         if (! $usuario->hasPermission($permission)) {

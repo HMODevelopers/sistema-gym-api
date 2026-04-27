@@ -17,7 +17,7 @@ Route::prefix('v1/rbac')
     ->group(function (): void {
         Route::get('check-admin', function () {
             return response()->json([
-                'message' => 'Acceso permitido.',
+                'message' => 'Autorizado correctamente.',
             ]);
         });
     });

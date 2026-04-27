@@ -77,7 +77,13 @@ class Usuario extends Authenticatable
 
     public function hasPermission(string $permission): bool
     {
-        if (! $this->activo) {
+        $permission = trim($permission);
+
+        if (! $this->exists || $permission === '') {
+            return false;
+        }
+
+        if (! $this->activo || $this->estatus !== UsuarioEstatus::ACTIVO) {
             return false;
         }
 
