@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Api\V1\AuthController;
+use App\Http\Controllers\Api\V1\ClienteController;
 use App\Http\Controllers\Api\V1\MetodoPagoController;
 use App\Http\Controllers\Api\V1\PlanController;
 use App\Http\Controllers\Api\V1\SucursalController;
@@ -43,6 +44,17 @@ Route::prefix('v1')->group(function (): void {
         Route::match(['put', 'patch'], '{sucursal}', [SucursalController::class, 'update'])->middleware('permission:sucursales.editar');
         Route::patch('{sucursal}/desactivar', [SucursalController::class, 'desactivar'])->middleware('permission:sucursales.desactivar');
         Route::patch('{sucursal}/reactivar', [SucursalController::class, 'reactivar'])->middleware('permission:sucursales.editar');
+    });
+
+
+    Route::prefix('clientes')->middleware('auth:sanctum')->group(function (): void {
+        Route::get('/', [ClienteController::class, 'index'])->middleware('permission:clientes.ver');
+        Route::get('{cliente}', [ClienteController::class, 'show'])->middleware('permission:clientes.ver');
+        Route::post('/', [ClienteController::class, 'store'])->middleware('permission:clientes.crear');
+        Route::match(['put', 'patch'], '{cliente}', [ClienteController::class, 'update'])->middleware('permission:clientes.editar');
+        Route::patch('{cliente}/cambiar-estatus', [ClienteController::class, 'cambiarEstatus'])->middleware('permission:clientes.cambiar_estatus');
+        Route::patch('{cliente}/desactivar', [ClienteController::class, 'desactivar'])->middleware('permission:clientes.desactivar');
+        Route::patch('{cliente}/reactivar', [ClienteController::class, 'reactivar'])->middleware('permission:clientes.cambiar_estatus');
     });
 
     Route::prefix('metodos-pago')->middleware('auth:sanctum')->group(function (): void {
