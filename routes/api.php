@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Api\V1\AccesoController;
 use App\Http\Controllers\Api\V1\AuthController;
+use App\Http\Controllers\Api\V1\AuditoriaController;
 use App\Http\Controllers\Api\V1\BiometricoController;
 use App\Http\Controllers\Api\V1\ClienteController;
 use App\Http\Controllers\Api\V1\DispositivoController;
@@ -118,5 +119,10 @@ Route::prefix('v1')->group(function (): void {
         Route::get('/', [AccesoController::class, 'index'])->middleware('permission:accesos.ver');
         Route::get('{acceso}', [AccesoController::class, 'show'])->middleware('permission:accesos.ver');
         Route::post('validar', [AccesoController::class, 'validar'])->middleware('permission:accesos.validar');
+    });
+
+    Route::prefix('auditoria')->middleware('auth:sanctum')->group(function (): void {
+        Route::get('/', [AuditoriaController::class, 'index'])->middleware('permission:auditoria.ver');
+        Route::get('{evento}', [AuditoriaController::class, 'show'])->middleware('permission:auditoria.ver');
     });
 });

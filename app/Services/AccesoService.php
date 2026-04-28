@@ -20,6 +20,8 @@ use Illuminate\Support\Facades\Schema;
 
 class AccesoService
 {
+    public function __construct(private readonly AuditoriaService $auditoriaService) {}
+
     public function index(Request $request): LengthAwarePaginator
     {
         $perPage = min(max((int) $request->integer('per_page', 15), 1), 100);
@@ -200,6 +202,25 @@ class AccesoService
         });
 
         $this->loadRelationsForModel($acceso);
+
+        $this->auditoriaService->registrar(
+            modulo: 'ACCESOS',
+            accion: $resultado === 'PERMITIDO' ? 'PERMITIR_ACCESO' : 'DENEGAR_ACCESO',
+            entidad: 'Acceso',
+            entidadId: $acceso->id,
+            descripcion: $resultado === 'PERMITIDO' ? 'Acceso permitido.' : 'Acceso denegado.',
+            valoresNuevos: [
+                'cliente_id' => $cliente?->id,
+                'membresia_id' => $membresia?->id,
+                'sucursal_id' => $sucursalId,
+                'metodo' => mb_strtoupper((string) $payload['metodo']),
+                'resultado' => $resultado,
+                'motivo_rechazo' => $motivo,
+                'fecha_acceso' => $acceso->fecha_acceso,
+            ],
+            sucursalId: $sucursalId,
+            usuarioId: $usuario?->id,
+        );
 
         return [
             'resultado' => $resultado,

@@ -8,12 +8,15 @@ use App\Http\Requests\MetodosPago\StoreMetodoPagoRequest;
 use App\Http\Requests\MetodosPago\UpdateMetodoPagoRequest;
 use App\Http\Resources\MetodosPago\MetodoPagoResource;
 use App\Models\MetodoPago;
+use App\Services\AuditoriaService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Schema;
 
 class MetodoPagoController extends Controller
 {
+    public function __construct(private readonly AuditoriaService $auditoriaService) {}
+
     public function index(Request $request): JsonResponse
     {
         $perPage = min(max((int) $request->integer('per_page', 15), 1), 100);
@@ -77,6 +80,14 @@ class MetodoPagoController extends Controller
         }
 
         $metodoPago = MetodoPago::query()->create($payload);
+        $this->auditoriaService->registrar(
+            modulo: 'METODOS_PAGO',
+            accion: 'CREAR',
+            entidad: 'MetodoPago',
+            entidadId: $metodoPago->id,
+            descripcion: 'Método de pago creado correctamente.',
+            valoresNuevos: $metodoPago->toArray(),
+        );
 
         return response()->json([
             'message' => 'Método de pago creado correctamente.',
@@ -87,8 +98,18 @@ class MetodoPagoController extends Controller
     public function update(UpdateMetodoPagoRequest $request, int $metodoPago): JsonResponse
     {
         $metodoPagoModel = $this->findMetodoPagoOrFail($metodoPago);
+        $valoresAnteriores = $metodoPagoModel->toArray();
         $metodoPagoModel->fill($this->sanitizePayload($request->validated()));
         $metodoPagoModel->save();
+        $this->auditoriaService->registrar(
+            modulo: 'METODOS_PAGO',
+            accion: 'ACTUALIZAR',
+            entidad: 'MetodoPago',
+            entidadId: $metodoPagoModel->id,
+            descripcion: 'Método de pago actualizado correctamente.',
+            valoresAnteriores: $valoresAnteriores,
+            valoresNuevos: $metodoPagoModel->fresh()?->toArray(),
+        );
 
         return response()->json([
             'message' => 'Método de pago actualizado correctamente.',
@@ -99,9 +120,19 @@ class MetodoPagoController extends Controller
     public function desactivar(int $metodoPago): JsonResponse
     {
         $metodoPagoModel = $this->findMetodoPagoOrFail($metodoPago);
+        $valoresAnteriores = $metodoPagoModel->toArray();
 
         // TODO: validar impacto operativo cuando existan pagos/renovaciones ligados al método de pago.
         $metodoPagoModel->forceFill(['activo' => false])->save();
+        $this->auditoriaService->registrar(
+            modulo: 'METODOS_PAGO',
+            accion: 'DESACTIVAR',
+            entidad: 'MetodoPago',
+            entidadId: $metodoPagoModel->id,
+            descripcion: 'Método de pago desactivado correctamente.',
+            valoresAnteriores: $valoresAnteriores,
+            valoresNuevos: $metodoPagoModel->fresh()?->toArray(),
+        );
 
         return response()->json([
             'message' => 'Método de pago desactivado correctamente.',
@@ -112,7 +143,17 @@ class MetodoPagoController extends Controller
     public function reactivar(int $metodoPago): JsonResponse
     {
         $metodoPagoModel = $this->findMetodoPagoOrFail($metodoPago);
+        $valoresAnteriores = $metodoPagoModel->toArray();
         $metodoPagoModel->forceFill(['activo' => true])->save();
+        $this->auditoriaService->registrar(
+            modulo: 'METODOS_PAGO',
+            accion: 'REACTIVAR',
+            entidad: 'MetodoPago',
+            entidadId: $metodoPagoModel->id,
+            descripcion: 'Método de pago reactivado correctamente.',
+            valoresAnteriores: $valoresAnteriores,
+            valoresNuevos: $metodoPagoModel->fresh()?->toArray(),
+        );
 
         return response()->json([
             'message' => 'Método de pago reactivado correctamente.',

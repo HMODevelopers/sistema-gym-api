@@ -10,6 +10,7 @@ use App\Http\Requests\Clientes\StoreClienteRequest;
 use App\Http\Requests\Clientes\UpdateClienteRequest;
 use App\Http\Resources\Clientes\ClienteResource;
 use App\Models\Cliente;
+use App\Services\AuditoriaService;
 use Carbon\Carbon;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -17,6 +18,8 @@ use Illuminate\Support\Facades\Schema;
 
 class ClienteController extends Controller
 {
+    public function __construct(private readonly AuditoriaService $auditoriaService) {}
+
     public function index(Request $request): JsonResponse
     {
         $perPage = min(max((int) $request->integer('per_page', 15), 1), 100);
@@ -110,7 +113,15 @@ class ClienteController extends Controller
             $cliente->loadMissing('sucursal:id,nombre,clave');
         }
 
-        // TODO: Registrar en bitácora/auditoría cuando el módulo esté disponible.
+        $this->auditoriaService->registrar(
+            modulo: 'CLIENTES',
+            accion: 'CREAR',
+            entidad: 'Cliente',
+            entidadId: $cliente->id,
+            descripcion: 'Cliente creado correctamente.',
+            valoresNuevos: $cliente->toArray(),
+            sucursalId: (int) ($cliente->sucursal_id ?? 0) ?: null,
+        );
 
         return response()->json([
             'message' => 'Cliente creado correctamente.',
@@ -121,6 +132,7 @@ class ClienteController extends Controller
     public function update(UpdateClienteRequest $request, int $cliente): JsonResponse
     {
         $clienteModel = $this->findClienteOrFail($cliente);
+        $valoresAnteriores = $clienteModel->toArray();
         $clienteModel->fill($this->sanitizePayload($request->validated()));
         $clienteModel->save();
 
@@ -128,7 +140,16 @@ class ClienteController extends Controller
             $clienteModel->loadMissing('sucursal:id,nombre,clave');
         }
 
-        // TODO: Registrar en bitácora/auditoría cuando el módulo esté disponible.
+        $this->auditoriaService->registrar(
+            modulo: 'CLIENTES',
+            accion: 'ACTUALIZAR',
+            entidad: 'Cliente',
+            entidadId: $clienteModel->id,
+            descripcion: 'Cliente actualizado correctamente.',
+            valoresAnteriores: $valoresAnteriores,
+            valoresNuevos: $clienteModel->fresh()?->toArray(),
+            sucursalId: (int) ($clienteModel->sucursal_id ?? 0) ?: null,
+        );
 
         return response()->json([
             'message' => 'Cliente actualizado correctamente.',
@@ -144,11 +165,24 @@ class ClienteController extends Controller
             throw new ApiException('La columna estatus no está disponible en clientes.', 422);
         }
 
+        $estatusAnterior = $clienteModel->estatus;
         $clienteModel->forceFill([
             'estatus' => $request->validated('estatus'),
         ])->save();
 
-        // TODO: Registrar motivo y cambio de estatus en bitácora/auditoría cuando el módulo esté disponible.
+        $this->auditoriaService->registrar(
+            modulo: 'CLIENTES',
+            accion: 'CAMBIAR_ESTATUS',
+            entidad: 'Cliente',
+            entidadId: $clienteModel->id,
+            descripcion: 'Estatus del cliente actualizado correctamente.',
+            valoresAnteriores: ['estatus' => $estatusAnterior],
+            valoresNuevos: [
+                'estatus' => $clienteModel->estatus,
+                'motivo' => $request->validated('motivo'),
+            ],
+            sucursalId: (int) ($clienteModel->sucursal_id ?? 0) ?: null,
+        );
 
         return response()->json([
             'message' => 'Estatus del cliente actualizado correctamente.',
@@ -173,9 +207,19 @@ class ClienteController extends Controller
             throw new ApiException('No hay columnas para desactivar al cliente.', 422);
         }
 
+        $valoresAnteriores = $clienteModel->toArray();
         $clienteModel->forceFill($attributes)->save();
 
-        // TODO: Registrar desactivación en bitácora/auditoría cuando el módulo esté disponible.
+        $this->auditoriaService->registrar(
+            modulo: 'CLIENTES',
+            accion: 'DESACTIVAR',
+            entidad: 'Cliente',
+            entidadId: $clienteModel->id,
+            descripcion: 'Cliente desactivado correctamente.',
+            valoresAnteriores: $valoresAnteriores,
+            valoresNuevos: $clienteModel->fresh()?->toArray(),
+            sucursalId: (int) ($clienteModel->sucursal_id ?? 0) ?: null,
+        );
 
         return response()->json([
             'message' => 'Cliente desactivado correctamente.',
@@ -200,9 +244,19 @@ class ClienteController extends Controller
             throw new ApiException('No hay columnas para reactivar al cliente.', 422);
         }
 
+        $valoresAnteriores = $clienteModel->toArray();
         $clienteModel->forceFill($attributes)->save();
 
-        // TODO: Registrar reactivación en bitácora/auditoría cuando el módulo esté disponible.
+        $this->auditoriaService->registrar(
+            modulo: 'CLIENTES',
+            accion: 'REACTIVAR',
+            entidad: 'Cliente',
+            entidadId: $clienteModel->id,
+            descripcion: 'Cliente reactivado correctamente.',
+            valoresAnteriores: $valoresAnteriores,
+            valoresNuevos: $clienteModel->fresh()?->toArray(),
+            sucursalId: (int) ($clienteModel->sucursal_id ?? 0) ?: null,
+        );
 
         return response()->json([
             'message' => 'Cliente reactivado correctamente.',

@@ -13,6 +13,7 @@ use App\Models\Membresia;
 use App\Models\MetodoPago;
 use App\Models\Pago;
 use App\Models\Usuario;
+use App\Services\AuditoriaService;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\JsonResponse;
@@ -22,6 +23,8 @@ use Illuminate\Support\Facades\Schema;
 
 class PagoController extends Controller
 {
+    public function __construct(private readonly AuditoriaService $auditoriaService) {}
+
     public function index(Request $request): JsonResponse
     {
         $perPage = min(max((int) $request->integer('per_page', 15), 1), 100);
@@ -221,7 +224,15 @@ class PagoController extends Controller
 
         $this->loadRelationsForModel($pago);
 
-        // TODO: Registrar pago en bitácora/auditoría cuando el módulo esté disponible.
+        $this->auditoriaService->registrar(
+            modulo: 'PAGOS',
+            accion: 'REGISTRAR',
+            entidad: 'Pago',
+            entidadId: $pago->id,
+            descripcion: 'Pago registrado correctamente.',
+            valoresNuevos: $pago->toArray(),
+            sucursalId: (int) ($pago->sucursal_id ?? 0) ?: null,
+        );
 
         return response()->json([
             'message' => 'Pago registrado correctamente.',
@@ -232,6 +243,7 @@ class PagoController extends Controller
     public function cancelar(CancelarPagoRequest $request, int $pago): JsonResponse
     {
         $pagoModel = $this->findPagoOrFail($pago);
+        $valoresAnteriores = $pagoModel->toArray();
 
         if (($pagoModel->estatus ?? null) === $this->cancelledStatusValue()) {
             throw new ApiException('El pago ya está cancelado.', 422);
@@ -265,7 +277,19 @@ class PagoController extends Controller
 
         $this->loadRelationsForModel($pagoModel);
 
-        // TODO: Registrar cancelación de pago en bitácora/auditoría cuando el módulo esté disponible.
+        $this->auditoriaService->registrar(
+            modulo: 'PAGOS',
+            accion: 'CANCELAR',
+            entidad: 'Pago',
+            entidadId: $pagoModel->id,
+            descripcion: 'Pago cancelado correctamente.',
+            valoresAnteriores: $valoresAnteriores,
+            valoresNuevos: [
+                'estatus' => $pagoModel->estatus,
+                'motivo_cancelacion' => $pagoModel->motivo_cancelacion,
+            ],
+            sucursalId: (int) ($pagoModel->sucursal_id ?? 0) ?: null,
+        );
 
         return response()->json([
             'message' => 'Pago cancelado correctamente.',

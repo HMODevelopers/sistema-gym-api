@@ -13,6 +13,7 @@ use App\Http\Resources\Membresias\MembresiaResource;
 use App\Models\Cliente;
 use App\Models\Membresia;
 use App\Models\Plan;
+use App\Services\AuditoriaService;
 use Carbon\Carbon;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -21,6 +22,8 @@ use Illuminate\Support\Facades\Schema;
 
 class MembresiaController extends Controller
 {
+    public function __construct(private readonly AuditoriaService $auditoriaService) {}
+
     public function index(Request $request): JsonResponse
     {
         $perPage = min(max((int) $request->integer('per_page', 15), 1), 100);
@@ -205,7 +208,15 @@ class MembresiaController extends Controller
         $membresia = Membresia::query()->create($this->sanitizePayload($payload));
         $this->loadRelationsForModel($membresia);
 
-        // TODO: Registrar creación de membresía en bitácora/auditoría cuando el módulo esté disponible.
+        $this->auditoriaService->registrar(
+            modulo: 'MEMBRESIAS',
+            accion: 'CREAR',
+            entidad: 'Membresia',
+            entidadId: $membresia->id,
+            descripcion: 'Membresía creada correctamente.',
+            valoresNuevos: $membresia->toArray(),
+            sucursalId: (int) ($membresia->sucursal_id ?? 0) ?: null,
+        );
 
         return response()->json([
             'message' => 'Membresía creada correctamente.',
@@ -216,6 +227,7 @@ class MembresiaController extends Controller
     public function update(UpdateMembresiaRequest $request, int $membresia): JsonResponse
     {
         $membresiaModel = $this->findMembresiaOrFail($membresia);
+        $valoresAnteriores = $membresiaModel->toArray();
         $payload = $request->validated();
 
         if (array_key_exists('plan_id', $payload)) {
@@ -259,7 +271,16 @@ class MembresiaController extends Controller
         $membresiaModel->save();
         $this->loadRelationsForModel($membresiaModel);
 
-        // TODO: Registrar actualización de membresía en bitácora/auditoría cuando el módulo esté disponible.
+        $this->auditoriaService->registrar(
+            modulo: 'MEMBRESIAS',
+            accion: 'ACTUALIZAR',
+            entidad: 'Membresia',
+            entidadId: $membresiaModel->id,
+            descripcion: 'Membresía actualizada correctamente.',
+            valoresAnteriores: $valoresAnteriores,
+            valoresNuevos: $membresiaModel->fresh()?->toArray(),
+            sucursalId: (int) ($membresiaModel->sucursal_id ?? 0) ?: null,
+        );
 
         return response()->json([
             'message' => 'Membresía actualizada correctamente.',
@@ -329,7 +350,16 @@ class MembresiaController extends Controller
 
         $this->loadRelationsForModel($nuevaMembresia);
 
-        // TODO: Registrar renovación de membresía en bitácora/auditoría cuando el módulo esté disponible.
+        $this->auditoriaService->registrar(
+            modulo: 'MEMBRESIAS',
+            accion: 'RENOVAR',
+            entidad: 'Membresia',
+            entidadId: $nuevaMembresia->id,
+            descripcion: 'Membresía renovada correctamente.',
+            valoresAnteriores: $membresiaModel->toArray(),
+            valoresNuevos: $nuevaMembresia->toArray(),
+            sucursalId: (int) ($nuevaMembresia->sucursal_id ?? 0) ?: null,
+        );
 
         return response()->json([
             'message' => 'Membresía renovada correctamente.',
@@ -361,9 +391,22 @@ class MembresiaController extends Controller
             $payload['observaciones'] = trim((string) $request->input('motivo'));
         }
 
+        $valoresAnteriores = $membresiaModel->toArray();
         $membresiaModel->forceFill($this->sanitizePayload($payload))->save();
 
-        // TODO: Registrar suspensión de membresía en bitácora/auditoría cuando el módulo esté disponible.
+        $this->auditoriaService->registrar(
+            modulo: 'MEMBRESIAS',
+            accion: 'SUSPENDER',
+            entidad: 'Membresia',
+            entidadId: $membresiaModel->id,
+            descripcion: 'Membresía suspendida correctamente.',
+            valoresAnteriores: $valoresAnteriores,
+            valoresNuevos: array_merge(
+                ['estatus' => $membresiaModel->estatus],
+                $request->filled('motivo') ? ['motivo' => trim((string) $request->input('motivo'))] : [],
+            ),
+            sucursalId: (int) ($membresiaModel->sucursal_id ?? 0) ?: null,
+        );
 
         return response()->json([
             'message' => 'Membresía suspendida correctamente.',
@@ -390,9 +433,22 @@ class MembresiaController extends Controller
             $payload['observaciones'] = trim((string) $request->input('motivo'));
         }
 
+        $valoresAnteriores = $membresiaModel->toArray();
         $membresiaModel->forceFill($this->sanitizePayload($payload))->save();
 
-        // TODO: Registrar cancelación de membresía en bitácora/auditoría cuando el módulo esté disponible.
+        $this->auditoriaService->registrar(
+            modulo: 'MEMBRESIAS',
+            accion: 'CANCELAR',
+            entidad: 'Membresia',
+            entidadId: $membresiaModel->id,
+            descripcion: 'Membresía cancelada correctamente.',
+            valoresAnteriores: $valoresAnteriores,
+            valoresNuevos: array_merge(
+                ['estatus' => $membresiaModel->estatus],
+                $request->filled('motivo') ? ['motivo' => trim((string) $request->input('motivo'))] : [],
+            ),
+            sucursalId: (int) ($membresiaModel->sucursal_id ?? 0) ?: null,
+        );
 
         return response()->json([
             'message' => 'Membresía cancelada correctamente.',
@@ -427,9 +483,22 @@ class MembresiaController extends Controller
             $payload['observaciones'] = trim((string) $request->input('motivo'));
         }
 
+        $valoresAnteriores = $membresiaModel->toArray();
         $membresiaModel->forceFill($this->sanitizePayload($payload))->save();
 
-        // TODO: Registrar reactivación de membresía en bitácora/auditoría cuando el módulo esté disponible.
+        $this->auditoriaService->registrar(
+            modulo: 'MEMBRESIAS',
+            accion: 'REACTIVAR',
+            entidad: 'Membresia',
+            entidadId: $membresiaModel->id,
+            descripcion: 'Membresía reactivada correctamente.',
+            valoresAnteriores: $valoresAnteriores,
+            valoresNuevos: array_merge(
+                ['estatus' => $membresiaModel->estatus],
+                $request->filled('motivo') ? ['motivo' => trim((string) $request->input('motivo'))] : [],
+            ),
+            sucursalId: (int) ($membresiaModel->sucursal_id ?? 0) ?: null,
+        );
 
         return response()->json([
             'message' => 'Membresía reactivada correctamente.',

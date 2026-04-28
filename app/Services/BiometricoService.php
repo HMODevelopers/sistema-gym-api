@@ -21,6 +21,8 @@ use Illuminate\Support\Facades\Schema;
 
 class BiometricoService
 {
+    public function __construct(private readonly AuditoriaService $auditoriaService) {}
+
     public function index(Request $request): LengthAwarePaginator
     {
         $this->assertBiometricTableExists();
@@ -212,7 +214,15 @@ class BiometricoService
             throw $exception;
         }
 
-        // TODO: Registrar enrolamiento biométrico en bitácora/auditoría cuando el módulo esté disponible.
+        $this->auditoriaService->registrar(
+            modulo: 'BIOMETRICOS',
+            accion: 'ENROLAR',
+            entidad: 'Biometrico',
+            entidadId: $biometrico->id,
+            descripcion: 'Biométrico enrolado correctamente.',
+            valoresNuevos: $this->auditBiometricoPayload($biometrico),
+            sucursalId: (int) ($cliente->sucursal_id ?? 0) ?: null,
+        );
 
         return [
             'biometrico' => $biometrico,
@@ -238,7 +248,15 @@ class BiometricoService
         $biometrico->refresh();
         $this->loadRelationsForModel($biometrico);
 
-        // TODO: Registrar cambio de huella principal en bitácora/auditoría cuando el módulo esté disponible.
+        $this->auditoriaService->registrar(
+            modulo: 'BIOMETRICOS',
+            accion: 'MARCAR_PRINCIPAL',
+            entidad: 'Biometrico',
+            entidadId: $biometrico->id,
+            descripcion: 'Biométrico marcado como principal.',
+            valoresNuevos: $this->auditBiometricoPayload($biometrico),
+            sucursalId: (int) ($biometrico->cliente?->sucursal_id ?? 0) ?: null,
+        );
 
         return $biometrico;
     }
@@ -291,7 +309,20 @@ class BiometricoService
         $biometrico->refresh();
         $this->loadRelationsForModel($biometrico);
 
-        // TODO: Registrar desactivación/revocación biométrica en bitácora/auditoría cuando el módulo esté disponible.
+        $this->auditoriaService->registrar(
+            modulo: 'BIOMETRICOS',
+            accion: $estatus === ClienteBiometricoEstatus::REVOCADO->value ? 'REVOCAR' : 'DESACTIVAR',
+            entidad: 'Biometrico',
+            entidadId: $biometrico->id,
+            descripcion: $estatus === ClienteBiometricoEstatus::REVOCADO->value
+                ? 'Biométrico revocado correctamente.'
+                : 'Biométrico desactivado correctamente.',
+            valoresNuevos: array_merge(
+                $this->auditBiometricoPayload($biometrico),
+                filled($motivo) ? ['motivo' => $motivo] : [],
+            ),
+            sucursalId: (int) ($biometrico->cliente?->sucursal_id ?? 0) ?: null,
+        );
 
         return $biometrico;
     }
@@ -562,5 +593,22 @@ class BiometricoService
         ];
 
         return Arr::only($payload, array_values(array_filter($columns, static fn (string $column): bool => Schema::hasColumn(ClienteBiometrico::tableName(), $column))));
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    private function auditBiometricoPayload(ClienteBiometrico $biometrico): array
+    {
+        return Arr::only($biometrico->toArray(), [
+            'id',
+            'cliente_id',
+            'dispositivo_id',
+            'dedo',
+            'es_principal',
+            'estatus',
+            'activo',
+            'enrolado_at',
+        ]);
     }
 }

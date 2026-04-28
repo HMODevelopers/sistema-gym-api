@@ -8,12 +8,15 @@ use App\Http\Requests\Planes\StorePlanRequest;
 use App\Http\Requests\Planes\UpdatePlanRequest;
 use App\Http\Resources\Planes\PlanResource;
 use App\Models\Plan;
+use App\Services\AuditoriaService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Schema;
 
 class PlanController extends Controller
 {
+    public function __construct(private readonly AuditoriaService $auditoriaService) {}
+
     public function index(Request $request): JsonResponse
     {
         $perPage = min(max((int) $request->integer('per_page', 15), 1), 100);
@@ -77,6 +80,14 @@ class PlanController extends Controller
         $payload['activo'] = $payload['activo'] ?? true;
 
         $plan = Plan::query()->create($payload);
+        $this->auditoriaService->registrar(
+            modulo: 'PLANES',
+            accion: 'CREAR',
+            entidad: 'Plan',
+            entidadId: $plan->id,
+            descripcion: 'Plan creado correctamente.',
+            valoresNuevos: $plan->toArray(),
+        );
 
         return response()->json([
             'message' => 'Plan creado correctamente.',
@@ -87,8 +98,18 @@ class PlanController extends Controller
     public function update(UpdatePlanRequest $request, int $plan): JsonResponse
     {
         $planModel = $this->findPlanOrFail($plan);
+        $valoresAnteriores = $planModel->toArray();
         $planModel->fill($this->sanitizePayload($request->validated()));
         $planModel->save();
+        $this->auditoriaService->registrar(
+            modulo: 'PLANES',
+            accion: 'ACTUALIZAR',
+            entidad: 'Plan',
+            entidadId: $planModel->id,
+            descripcion: 'Plan actualizado correctamente.',
+            valoresAnteriores: $valoresAnteriores,
+            valoresNuevos: $planModel->fresh()?->toArray(),
+        );
 
         return response()->json([
             'message' => 'Plan actualizado correctamente.',
@@ -99,9 +120,19 @@ class PlanController extends Controller
     public function desactivar(int $plan): JsonResponse
     {
         $planModel = $this->findPlanOrFail($plan);
+        $valoresAnteriores = $planModel->toArray();
 
         // TODO: Validar impacto operativo cuando existan membresías/pagos ligados a planes activos.
         $planModel->forceFill(['activo' => false])->save();
+        $this->auditoriaService->registrar(
+            modulo: 'PLANES',
+            accion: 'DESACTIVAR',
+            entidad: 'Plan',
+            entidadId: $planModel->id,
+            descripcion: 'Plan desactivado correctamente.',
+            valoresAnteriores: $valoresAnteriores,
+            valoresNuevos: $planModel->fresh()?->toArray(),
+        );
 
         return response()->json([
             'message' => 'Plan desactivado correctamente.',
@@ -112,7 +143,17 @@ class PlanController extends Controller
     public function reactivar(int $plan): JsonResponse
     {
         $planModel = $this->findPlanOrFail($plan);
+        $valoresAnteriores = $planModel->toArray();
         $planModel->forceFill(['activo' => true])->save();
+        $this->auditoriaService->registrar(
+            modulo: 'PLANES',
+            accion: 'REACTIVAR',
+            entidad: 'Plan',
+            entidadId: $planModel->id,
+            descripcion: 'Plan reactivado correctamente.',
+            valoresAnteriores: $valoresAnteriores,
+            valoresNuevos: $planModel->fresh()?->toArray(),
+        );
 
         return response()->json([
             'message' => 'Plan reactivado correctamente.',

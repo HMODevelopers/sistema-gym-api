@@ -10,6 +10,8 @@ use Illuminate\Support\Facades\Hash;
 
 class AuthService
 {
+    public function __construct(private readonly AuditoriaService $auditoriaService) {}
+
     public function login(string $login, string $password): array
     {
         $usuario = Usuario::query()
@@ -19,6 +21,13 @@ class AuthService
             ->first();
 
         if (! $usuario || ! Hash::check($password, $usuario->getAuthPassword())) {
+            $this->auditoriaService->registrar(
+                modulo: 'AUTH',
+                accion: 'LOGIN_FALLIDO',
+                entidad: 'Usuario',
+                descripcion: 'Intento de inicio de sesión fallido.',
+                valoresNuevos: ['login' => $login],
+            );
             throw new ApiException('Credenciales inválidas.', 401);
         }
 
@@ -29,6 +38,15 @@ class AuthService
         ])->save();
 
         $token = $usuario->createToken('auth_token')->plainTextToken;
+
+        $this->auditoriaService->registrar(
+            modulo: 'AUTH',
+            accion: 'LOGIN_EXITOSO',
+            entidad: 'Usuario',
+            entidadId: $usuario->id,
+            descripcion: 'Inicio de sesión exitoso.',
+            sucursalId: $usuario->sucursal_id,
+        );
 
         return $this->buildAuthPayload($usuario->fresh('roles.permisos'), $token);
     }
@@ -43,6 +61,15 @@ class AuthService
 
     public function logout(Usuario $usuario): void
     {
+        $this->auditoriaService->registrar(
+            modulo: 'AUTH',
+            accion: 'LOGOUT',
+            entidad: 'Usuario',
+            entidadId: $usuario->id,
+            descripcion: 'Cierre de sesión.',
+            sucursalId: $usuario->sucursal_id,
+        );
+
         $tokenActual = $usuario->currentAccessToken();
 
         if ($tokenActual) {

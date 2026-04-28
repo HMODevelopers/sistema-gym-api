@@ -10,12 +10,15 @@ use App\Http\Requests\Dispositivos\StoreDispositivoRequest;
 use App\Http\Requests\Dispositivos\UpdateDispositivoRequest;
 use App\Http\Resources\Dispositivos\DispositivoResource;
 use App\Models\Dispositivo;
+use App\Services\AuditoriaService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Schema;
 
 class DispositivoController extends Controller
 {
+    public function __construct(private readonly AuditoriaService $auditoriaService) {}
+
     public function index(Request $request): JsonResponse
     {
         $perPage = min(max((int) $request->integer('per_page', 15), 1), 100);
@@ -112,7 +115,15 @@ class DispositivoController extends Controller
             $dispositivo->loadMissing('sucursal:id,nombre,clave');
         }
 
-        // TODO: Registrar alta de dispositivo en bitácora/auditoría cuando el módulo esté disponible.
+        $this->auditoriaService->registrar(
+            modulo: 'DISPOSITIVOS',
+            accion: 'CREAR',
+            entidad: 'Dispositivo',
+            entidadId: $dispositivo->id,
+            descripcion: 'Dispositivo creado correctamente.',
+            valoresNuevos: $dispositivo->toArray(),
+            sucursalId: (int) ($dispositivo->sucursal_id ?? 0) ?: null,
+        );
 
         return response()->json([
             'message' => 'Dispositivo creado correctamente.',
@@ -123,6 +134,7 @@ class DispositivoController extends Controller
     public function update(UpdateDispositivoRequest $request, int $dispositivo): JsonResponse
     {
         $dispositivoModel = $this->findDispositivoOrFail($dispositivo);
+        $valoresAnteriores = $dispositivoModel->toArray();
         $dispositivoModel->fill($this->sanitizePayload($request->validated()));
         $dispositivoModel->save();
 
@@ -130,7 +142,16 @@ class DispositivoController extends Controller
             $dispositivoModel->loadMissing('sucursal:id,nombre,clave');
         }
 
-        // TODO: Registrar actualización de dispositivo en bitácora/auditoría cuando el módulo esté disponible.
+        $this->auditoriaService->registrar(
+            modulo: 'DISPOSITIVOS',
+            accion: 'ACTUALIZAR',
+            entidad: 'Dispositivo',
+            entidadId: $dispositivoModel->id,
+            descripcion: 'Dispositivo actualizado correctamente.',
+            valoresAnteriores: $valoresAnteriores,
+            valoresNuevos: $dispositivoModel->fresh()?->toArray(),
+            sucursalId: (int) ($dispositivoModel->sucursal_id ?? 0) ?: null,
+        );
 
         return response()->json([
             'message' => 'Dispositivo actualizado correctamente.',
@@ -146,11 +167,21 @@ class DispositivoController extends Controller
             throw new ApiException('La columna estatus no está disponible en dispositivos.', 422);
         }
 
+        $valoresAnteriores = $dispositivoModel->toArray();
         $dispositivoModel->forceFill([
             'estatus' => $request->validated('estatus'),
         ])->save();
 
-        // TODO: Registrar cambio de estatus de dispositivo en bitácora/auditoría cuando el módulo esté disponible.
+        $this->auditoriaService->registrar(
+            modulo: 'DISPOSITIVOS',
+            accion: 'CAMBIAR_ESTATUS',
+            entidad: 'Dispositivo',
+            entidadId: $dispositivoModel->id,
+            descripcion: 'Estatus del dispositivo actualizado correctamente.',
+            valoresAnteriores: $valoresAnteriores,
+            valoresNuevos: ['estatus' => $dispositivoModel->estatus],
+            sucursalId: (int) ($dispositivoModel->sucursal_id ?? 0) ?: null,
+        );
 
         return response()->json([
             'message' => 'Estatus del dispositivo actualizado correctamente.',
@@ -175,9 +206,19 @@ class DispositivoController extends Controller
             throw new ApiException('No hay columnas para desactivar el dispositivo.', 422);
         }
 
+        $valoresAnteriores = $dispositivoModel->toArray();
         $dispositivoModel->forceFill($attributes)->save();
 
-        // TODO: Registrar desactivación de dispositivo en bitácora/auditoría cuando el módulo esté disponible.
+        $this->auditoriaService->registrar(
+            modulo: 'DISPOSITIVOS',
+            accion: 'DESACTIVAR',
+            entidad: 'Dispositivo',
+            entidadId: $dispositivoModel->id,
+            descripcion: 'Dispositivo desactivado correctamente.',
+            valoresAnteriores: $valoresAnteriores,
+            valoresNuevos: $dispositivoModel->fresh()?->toArray(),
+            sucursalId: (int) ($dispositivoModel->sucursal_id ?? 0) ?: null,
+        );
 
         return response()->json([
             'message' => 'Dispositivo desactivado correctamente.',
@@ -202,9 +243,19 @@ class DispositivoController extends Controller
             throw new ApiException('No hay columnas para reactivar el dispositivo.', 422);
         }
 
+        $valoresAnteriores = $dispositivoModel->toArray();
         $dispositivoModel->forceFill($attributes)->save();
 
-        // TODO: Registrar reactivación de dispositivo en bitácora/auditoría cuando el módulo esté disponible.
+        $this->auditoriaService->registrar(
+            modulo: 'DISPOSITIVOS',
+            accion: 'REACTIVAR',
+            entidad: 'Dispositivo',
+            entidadId: $dispositivoModel->id,
+            descripcion: 'Dispositivo reactivado correctamente.',
+            valoresAnteriores: $valoresAnteriores,
+            valoresNuevos: $dispositivoModel->fresh()?->toArray(),
+            sucursalId: (int) ($dispositivoModel->sucursal_id ?? 0) ?: null,
+        );
 
         return response()->json([
             'message' => 'Dispositivo reactivado correctamente.',
