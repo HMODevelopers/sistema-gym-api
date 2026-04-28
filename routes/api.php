@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Api\V1\AccesoController;
 use App\Http\Controllers\Api\V1\AuthController;
 use App\Http\Controllers\Api\V1\ClienteController;
 use App\Http\Controllers\Api\V1\MembresiaController;
@@ -54,6 +55,7 @@ Route::prefix('v1')->group(function (): void {
         Route::get('{cliente}', [ClienteController::class, 'show'])->middleware('permission:clientes.ver');
         Route::get('{cliente}/membresias', [MembresiaController::class, 'porCliente'])->middleware('permission:membresias.ver');
         Route::get('{cliente}/pagos', [PagoController::class, 'porCliente'])->middleware('permission:pagos.ver');
+        Route::get('{cliente}/accesos', [AccesoController::class, 'porCliente'])->middleware('permission:accesos.ver');
         Route::post('/', [ClienteController::class, 'store'])->middleware('permission:clientes.crear');
         Route::match(['put', 'patch'], '{cliente}', [ClienteController::class, 'update'])->middleware('permission:clientes.editar');
         Route::patch('{cliente}/cambiar-estatus', [ClienteController::class, 'cambiarEstatus'])->middleware('permission:clientes.cambiar_estatus');
@@ -86,5 +88,11 @@ Route::prefix('v1')->group(function (): void {
         Route::post('/', [PagoController::class, 'store'])->middleware('permission:pagos.registrar');
         Route::get('{pago}', [PagoController::class, 'show'])->middleware('permission:pagos.ver');
         Route::patch('{pago}/cancelar', [PagoController::class, 'cancelar'])->middleware('permission:pagos.cancelar');
+    });
+
+    Route::prefix('accesos')->middleware('auth:sanctum')->group(function (): void {
+        Route::get('/', [AccesoController::class, 'index'])->middleware('permission:accesos.ver');
+        Route::get('{acceso}', [AccesoController::class, 'show'])->middleware('permission:accesos.ver');
+        Route::post('validar', [AccesoController::class, 'validar'])->middleware('permission:accesos.validar');
     });
 });
