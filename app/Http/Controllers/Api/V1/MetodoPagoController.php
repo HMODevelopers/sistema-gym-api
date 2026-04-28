@@ -81,12 +81,11 @@ class MetodoPagoController extends Controller
 
         $metodoPago = MetodoPago::query()->create($payload);
         $this->auditoriaService->registrar(
-            modulo: 'METODOS_PAGO',
             accion: 'CREAR',
             entidad: 'MetodoPago',
             entidadId: $metodoPago->id,
             descripcion: 'Método de pago creado correctamente.',
-            valoresNuevos: $metodoPago->toArray(),
+            datosDespues: $metodoPago->toArray(),
         );
 
         return response()->json([
@@ -102,13 +101,12 @@ class MetodoPagoController extends Controller
         $metodoPagoModel->fill($this->sanitizePayload($request->validated()));
         $metodoPagoModel->save();
         $this->auditoriaService->registrar(
-            modulo: 'METODOS_PAGO',
-            accion: 'ACTUALIZAR',
+            accion: 'EDITAR',
             entidad: 'MetodoPago',
             entidadId: $metodoPagoModel->id,
             descripcion: 'Método de pago actualizado correctamente.',
-            valoresAnteriores: $valoresAnteriores,
-            valoresNuevos: $metodoPagoModel->fresh()?->toArray(),
+            datosAntes: $valoresAnteriores,
+            datosDespues: $metodoPagoModel->fresh()?->toArray(),
         );
 
         return response()->json([
@@ -125,13 +123,12 @@ class MetodoPagoController extends Controller
         // TODO: validar impacto operativo cuando existan pagos/renovaciones ligados al método de pago.
         $metodoPagoModel->forceFill(['activo' => false])->save();
         $this->auditoriaService->registrar(
-            modulo: 'METODOS_PAGO',
-            accion: 'DESACTIVAR',
+            accion: 'ELIMINAR_LOGICO',
             entidad: 'MetodoPago',
             entidadId: $metodoPagoModel->id,
             descripcion: 'Método de pago desactivado correctamente.',
-            valoresAnteriores: $valoresAnteriores,
-            valoresNuevos: $metodoPagoModel->fresh()?->toArray(),
+            datosAntes: $valoresAnteriores,
+            datosDespues: $metodoPagoModel->fresh()?->toArray(),
         );
 
         return response()->json([
@@ -146,13 +143,12 @@ class MetodoPagoController extends Controller
         $valoresAnteriores = $metodoPagoModel->toArray();
         $metodoPagoModel->forceFill(['activo' => true])->save();
         $this->auditoriaService->registrar(
-            modulo: 'METODOS_PAGO',
-            accion: 'REACTIVAR',
+            accion: 'CAMBIAR_ESTATUS',
             entidad: 'MetodoPago',
             entidadId: $metodoPagoModel->id,
             descripcion: 'Método de pago reactivado correctamente.',
-            valoresAnteriores: $valoresAnteriores,
-            valoresNuevos: $metodoPagoModel->fresh()?->toArray(),
+            datosAntes: $valoresAnteriores,
+            datosDespues: $metodoPagoModel->fresh()?->toArray(),
         );
 
         return response()->json([

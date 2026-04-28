@@ -204,12 +204,11 @@ class AccesoService
         $this->loadRelationsForModel($acceso);
 
         $this->auditoriaService->registrar(
-            modulo: 'ACCESOS',
-            accion: $resultado === 'PERMITIDO' ? 'PERMITIR_ACCESO' : 'DENEGAR_ACCESO',
+            accion: $resultado === 'PERMITIDO' ? 'VALIDAR_ACCESO' : 'DENEGAR_ACCESO',
             entidad: 'Acceso',
             entidadId: $acceso->id,
             descripcion: $resultado === 'PERMITIDO' ? 'Acceso permitido.' : 'Acceso denegado.',
-            valoresNuevos: [
+            datosDespues: [
                 'cliente_id' => $cliente?->id,
                 'membresia_id' => $membresia?->id,
                 'sucursal_id' => $sucursalId,

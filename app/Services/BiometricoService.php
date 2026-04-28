@@ -215,12 +215,11 @@ class BiometricoService
         }
 
         $this->auditoriaService->registrar(
-            modulo: 'BIOMETRICOS',
-            accion: 'ENROLAR',
+            accion: 'ENROLAR_HUELLA',
             entidad: 'Biometrico',
             entidadId: $biometrico->id,
             descripcion: 'Biométrico enrolado correctamente.',
-            valoresNuevos: $this->auditBiometricoPayload($biometrico),
+            datosDespues: $this->auditBiometricoPayload($biometrico),
             sucursalId: (int) ($cliente->sucursal_id ?? 0) ?: null,
         );
 
@@ -249,12 +248,11 @@ class BiometricoService
         $this->loadRelationsForModel($biometrico);
 
         $this->auditoriaService->registrar(
-            modulo: 'BIOMETRICOS',
-            accion: 'MARCAR_PRINCIPAL',
+            accion: 'AJUSTAR',
             entidad: 'Biometrico',
             entidadId: $biometrico->id,
             descripcion: 'Biométrico marcado como principal.',
-            valoresNuevos: $this->auditBiometricoPayload($biometrico),
+            datosDespues: $this->auditBiometricoPayload($biometrico),
             sucursalId: (int) ($biometrico->cliente?->sucursal_id ?? 0) ?: null,
         );
 
@@ -310,14 +308,13 @@ class BiometricoService
         $this->loadRelationsForModel($biometrico);
 
         $this->auditoriaService->registrar(
-            modulo: 'BIOMETRICOS',
-            accion: $estatus === ClienteBiometricoEstatus::REVOCADO->value ? 'REVOCAR' : 'DESACTIVAR',
+            accion: 'CAMBIAR_ESTATUS',
             entidad: 'Biometrico',
             entidadId: $biometrico->id,
             descripcion: $estatus === ClienteBiometricoEstatus::REVOCADO->value
                 ? 'Biométrico revocado correctamente.'
                 : 'Biométrico desactivado correctamente.',
-            valoresNuevos: array_merge(
+            datosDespues: array_merge(
                 $this->auditBiometricoPayload($biometrico),
                 filled($motivo) ? ['motivo' => $motivo] : [],
             ),

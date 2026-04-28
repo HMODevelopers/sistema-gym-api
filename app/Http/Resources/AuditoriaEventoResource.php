@@ -5,8 +5,8 @@ namespace App\Http\Resources;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
-/** @mixin \App\Models\BitacoraEvento */
-class BitacoraEventoResource extends JsonResource
+/** @mixin \App\Models\AuditoriaEvento */
+class AuditoriaEventoResource extends JsonResource
 {
     /**
      * @return array<string, mixed>
@@ -15,6 +15,18 @@ class BitacoraEventoResource extends JsonResource
     {
         return [
             'id' => $this->id,
+            'sucursal_id' => $this->sucursal_id,
+            'sucursal' => $this->whenLoaded('sucursal', function (): ?array {
+                if (! $this->sucursal) {
+                    return null;
+                }
+
+                return [
+                    'id' => $this->sucursal->id,
+                    'nombre' => $this->sucursal->nombre,
+                    'clave' => $this->sucursal->clave,
+                ];
+            }),
             'usuario_id' => $this->usuario_id,
             'usuario' => $this->whenLoaded('usuario', function (): ?array {
                 if (! $this->usuario) {
@@ -33,30 +45,14 @@ class BitacoraEventoResource extends JsonResource
                     'username' => $this->usuario->username,
                 ];
             }),
-            'sucursal_id' => $this->sucursal_id,
-            'sucursal' => $this->whenLoaded('sucursal', function (): ?array {
-                if (! $this->sucursal) {
-                    return null;
-                }
-
-                return [
-                    'id' => $this->sucursal->id,
-                    'nombre' => $this->sucursal->nombre,
-                    'clave' => $this->sucursal->clave,
-                ];
-            }),
-            'modulo' => $this->modulo,
-            'accion' => $this->accion,
             'entidad' => $this->entidad,
             'entidad_id' => $this->entidad_id,
+            'accion' => $this->accion,
             'descripcion' => $this->descripcion,
-            'valores_anteriores' => $this->valores_anteriores,
-            'valores_nuevos' => $this->valores_nuevos,
+            'datos_antes' => $this->datos_antes,
+            'datos_despues' => $this->datos_despues,
             'ip' => $this->ip,
             'user_agent' => $this->user_agent,
-            'metodo_http' => $this->metodo_http,
-            'ruta' => $this->ruta,
-            'request_id' => $this->request_id,
             'created_at' => $this->created_at?->format('Y-m-d H:i:s'),
         ];
     }

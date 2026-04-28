@@ -6,34 +6,30 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-class BitacoraEvento extends Model
+class AuditoriaEvento extends Model
 {
     use HasFactory;
 
-    protected $table = 'bitacora_eventos';
+    protected $table = 'auditoria_eventos';
 
     protected $fillable = [
-        'usuario_id',
         'sucursal_id',
-        'modulo',
-        'accion',
+        'usuario_id',
         'entidad',
         'entidad_id',
+        'accion',
         'descripcion',
-        'valores_anteriores',
-        'valores_nuevos',
+        'datos_antes',
+        'datos_despues',
         'ip',
         'user_agent',
-        'metodo_http',
-        'ruta',
-        'request_id',
     ];
 
     protected function casts(): array
     {
         return [
-            'valores_anteriores' => 'array',
-            'valores_nuevos' => 'array',
+            'datos_antes' => 'array',
+            'datos_despues' => 'array',
             'created_at' => 'datetime',
             'updated_at' => 'datetime',
         ];

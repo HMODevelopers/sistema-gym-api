@@ -114,12 +114,11 @@ class ClienteController extends Controller
         }
 
         $this->auditoriaService->registrar(
-            modulo: 'CLIENTES',
             accion: 'CREAR',
             entidad: 'Cliente',
             entidadId: $cliente->id,
             descripcion: 'Cliente creado correctamente.',
-            valoresNuevos: $cliente->toArray(),
+            datosDespues: $cliente->toArray(),
             sucursalId: (int) ($cliente->sucursal_id ?? 0) ?: null,
         );
 
@@ -141,13 +140,12 @@ class ClienteController extends Controller
         }
 
         $this->auditoriaService->registrar(
-            modulo: 'CLIENTES',
-            accion: 'ACTUALIZAR',
+            accion: 'EDITAR',
             entidad: 'Cliente',
             entidadId: $clienteModel->id,
             descripcion: 'Cliente actualizado correctamente.',
-            valoresAnteriores: $valoresAnteriores,
-            valoresNuevos: $clienteModel->fresh()?->toArray(),
+            datosAntes: $valoresAnteriores,
+            datosDespues: $clienteModel->fresh()?->toArray(),
             sucursalId: (int) ($clienteModel->sucursal_id ?? 0) ?: null,
         );
 
@@ -171,13 +169,12 @@ class ClienteController extends Controller
         ])->save();
 
         $this->auditoriaService->registrar(
-            modulo: 'CLIENTES',
             accion: 'CAMBIAR_ESTATUS',
             entidad: 'Cliente',
             entidadId: $clienteModel->id,
             descripcion: 'Estatus del cliente actualizado correctamente.',
-            valoresAnteriores: ['estatus' => $estatusAnterior],
-            valoresNuevos: [
+            datosAntes: ['estatus' => $estatusAnterior],
+            datosDespues: [
                 'estatus' => $clienteModel->estatus,
                 'motivo' => $request->validated('motivo'),
             ],
@@ -211,13 +208,12 @@ class ClienteController extends Controller
         $clienteModel->forceFill($attributes)->save();
 
         $this->auditoriaService->registrar(
-            modulo: 'CLIENTES',
-            accion: 'DESACTIVAR',
+            accion: 'ELIMINAR_LOGICO',
             entidad: 'Cliente',
             entidadId: $clienteModel->id,
             descripcion: 'Cliente desactivado correctamente.',
-            valoresAnteriores: $valoresAnteriores,
-            valoresNuevos: $clienteModel->fresh()?->toArray(),
+            datosAntes: $valoresAnteriores,
+            datosDespues: $clienteModel->fresh()?->toArray(),
             sucursalId: (int) ($clienteModel->sucursal_id ?? 0) ?: null,
         );
 
@@ -248,13 +244,12 @@ class ClienteController extends Controller
         $clienteModel->forceFill($attributes)->save();
 
         $this->auditoriaService->registrar(
-            modulo: 'CLIENTES',
-            accion: 'REACTIVAR',
+            accion: 'CAMBIAR_ESTATUS',
             entidad: 'Cliente',
             entidadId: $clienteModel->id,
             descripcion: 'Cliente reactivado correctamente.',
-            valoresAnteriores: $valoresAnteriores,
-            valoresNuevos: $clienteModel->fresh()?->toArray(),
+            datosAntes: $valoresAnteriores,
+            datosDespues: $clienteModel->fresh()?->toArray(),
             sucursalId: (int) ($clienteModel->sucursal_id ?? 0) ?: null,
         );
 

@@ -209,12 +209,11 @@ class MembresiaController extends Controller
         $this->loadRelationsForModel($membresia);
 
         $this->auditoriaService->registrar(
-            modulo: 'MEMBRESIAS',
             accion: 'CREAR',
             entidad: 'Membresia',
             entidadId: $membresia->id,
             descripcion: 'Membresía creada correctamente.',
-            valoresNuevos: $membresia->toArray(),
+            datosDespues: $membresia->toArray(),
             sucursalId: (int) ($membresia->sucursal_id ?? 0) ?: null,
         );
 
@@ -272,13 +271,12 @@ class MembresiaController extends Controller
         $this->loadRelationsForModel($membresiaModel);
 
         $this->auditoriaService->registrar(
-            modulo: 'MEMBRESIAS',
-            accion: 'ACTUALIZAR',
+            accion: 'EDITAR',
             entidad: 'Membresia',
             entidadId: $membresiaModel->id,
             descripcion: 'Membresía actualizada correctamente.',
-            valoresAnteriores: $valoresAnteriores,
-            valoresNuevos: $membresiaModel->fresh()?->toArray(),
+            datosAntes: $valoresAnteriores,
+            datosDespues: $membresiaModel->fresh()?->toArray(),
             sucursalId: (int) ($membresiaModel->sucursal_id ?? 0) ?: null,
         );
 
@@ -351,13 +349,12 @@ class MembresiaController extends Controller
         $this->loadRelationsForModel($nuevaMembresia);
 
         $this->auditoriaService->registrar(
-            modulo: 'MEMBRESIAS',
-            accion: 'RENOVAR',
+            accion: 'RENOVAR_MEMBRESIA',
             entidad: 'Membresia',
             entidadId: $nuevaMembresia->id,
             descripcion: 'Membresía renovada correctamente.',
-            valoresAnteriores: $membresiaModel->toArray(),
-            valoresNuevos: $nuevaMembresia->toArray(),
+            datosAntes: $membresiaModel->toArray(),
+            datosDespues: $nuevaMembresia->toArray(),
             sucursalId: (int) ($nuevaMembresia->sucursal_id ?? 0) ?: null,
         );
 
@@ -395,13 +392,12 @@ class MembresiaController extends Controller
         $membresiaModel->forceFill($this->sanitizePayload($payload))->save();
 
         $this->auditoriaService->registrar(
-            modulo: 'MEMBRESIAS',
-            accion: 'SUSPENDER',
+            accion: 'CAMBIAR_ESTATUS',
             entidad: 'Membresia',
             entidadId: $membresiaModel->id,
             descripcion: 'Membresía suspendida correctamente.',
-            valoresAnteriores: $valoresAnteriores,
-            valoresNuevos: array_merge(
+            datosAntes: $valoresAnteriores,
+            datosDespues: array_merge(
                 ['estatus' => $membresiaModel->estatus],
                 $request->filled('motivo') ? ['motivo' => trim((string) $request->input('motivo'))] : [],
             ),
@@ -437,13 +433,12 @@ class MembresiaController extends Controller
         $membresiaModel->forceFill($this->sanitizePayload($payload))->save();
 
         $this->auditoriaService->registrar(
-            modulo: 'MEMBRESIAS',
-            accion: 'CANCELAR',
+            accion: 'CAMBIAR_ESTATUS',
             entidad: 'Membresia',
             entidadId: $membresiaModel->id,
             descripcion: 'Membresía cancelada correctamente.',
-            valoresAnteriores: $valoresAnteriores,
-            valoresNuevos: array_merge(
+            datosAntes: $valoresAnteriores,
+            datosDespues: array_merge(
                 ['estatus' => $membresiaModel->estatus],
                 $request->filled('motivo') ? ['motivo' => trim((string) $request->input('motivo'))] : [],
             ),
@@ -487,13 +482,12 @@ class MembresiaController extends Controller
         $membresiaModel->forceFill($this->sanitizePayload($payload))->save();
 
         $this->auditoriaService->registrar(
-            modulo: 'MEMBRESIAS',
-            accion: 'REACTIVAR',
+            accion: 'CAMBIAR_ESTATUS',
             entidad: 'Membresia',
             entidadId: $membresiaModel->id,
             descripcion: 'Membresía reactivada correctamente.',
-            valoresAnteriores: $valoresAnteriores,
-            valoresNuevos: array_merge(
+            datosAntes: $valoresAnteriores,
+            datosDespues: array_merge(
                 ['estatus' => $membresiaModel->estatus],
                 $request->filled('motivo') ? ['motivo' => trim((string) $request->input('motivo'))] : [],
             ),

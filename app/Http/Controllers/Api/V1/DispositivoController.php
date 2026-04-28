@@ -116,12 +116,11 @@ class DispositivoController extends Controller
         }
 
         $this->auditoriaService->registrar(
-            modulo: 'DISPOSITIVOS',
             accion: 'CREAR',
             entidad: 'Dispositivo',
             entidadId: $dispositivo->id,
             descripcion: 'Dispositivo creado correctamente.',
-            valoresNuevos: $dispositivo->toArray(),
+            datosDespues: $dispositivo->toArray(),
             sucursalId: (int) ($dispositivo->sucursal_id ?? 0) ?: null,
         );
 
@@ -143,13 +142,12 @@ class DispositivoController extends Controller
         }
 
         $this->auditoriaService->registrar(
-            modulo: 'DISPOSITIVOS',
-            accion: 'ACTUALIZAR',
+            accion: 'EDITAR',
             entidad: 'Dispositivo',
             entidadId: $dispositivoModel->id,
             descripcion: 'Dispositivo actualizado correctamente.',
-            valoresAnteriores: $valoresAnteriores,
-            valoresNuevos: $dispositivoModel->fresh()?->toArray(),
+            datosAntes: $valoresAnteriores,
+            datosDespues: $dispositivoModel->fresh()?->toArray(),
             sucursalId: (int) ($dispositivoModel->sucursal_id ?? 0) ?: null,
         );
 
@@ -173,13 +171,12 @@ class DispositivoController extends Controller
         ])->save();
 
         $this->auditoriaService->registrar(
-            modulo: 'DISPOSITIVOS',
             accion: 'CAMBIAR_ESTATUS',
             entidad: 'Dispositivo',
             entidadId: $dispositivoModel->id,
             descripcion: 'Estatus del dispositivo actualizado correctamente.',
-            valoresAnteriores: $valoresAnteriores,
-            valoresNuevos: ['estatus' => $dispositivoModel->estatus],
+            datosAntes: $valoresAnteriores,
+            datosDespues: ['estatus' => $dispositivoModel->estatus],
             sucursalId: (int) ($dispositivoModel->sucursal_id ?? 0) ?: null,
         );
 
@@ -210,13 +207,12 @@ class DispositivoController extends Controller
         $dispositivoModel->forceFill($attributes)->save();
 
         $this->auditoriaService->registrar(
-            modulo: 'DISPOSITIVOS',
-            accion: 'DESACTIVAR',
+            accion: 'ELIMINAR_LOGICO',
             entidad: 'Dispositivo',
             entidadId: $dispositivoModel->id,
             descripcion: 'Dispositivo desactivado correctamente.',
-            valoresAnteriores: $valoresAnteriores,
-            valoresNuevos: $dispositivoModel->fresh()?->toArray(),
+            datosAntes: $valoresAnteriores,
+            datosDespues: $dispositivoModel->fresh()?->toArray(),
             sucursalId: (int) ($dispositivoModel->sucursal_id ?? 0) ?: null,
         );
 
@@ -247,13 +243,12 @@ class DispositivoController extends Controller
         $dispositivoModel->forceFill($attributes)->save();
 
         $this->auditoriaService->registrar(
-            modulo: 'DISPOSITIVOS',
-            accion: 'REACTIVAR',
+            accion: 'CAMBIAR_ESTATUS',
             entidad: 'Dispositivo',
             entidadId: $dispositivoModel->id,
             descripcion: 'Dispositivo reactivado correctamente.',
-            valoresAnteriores: $valoresAnteriores,
-            valoresNuevos: $dispositivoModel->fresh()?->toArray(),
+            datosAntes: $valoresAnteriores,
+            datosDespues: $dispositivoModel->fresh()?->toArray(),
             sucursalId: (int) ($dispositivoModel->sucursal_id ?? 0) ?: null,
         );
 

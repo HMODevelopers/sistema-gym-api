@@ -69,12 +69,11 @@ class SucursalController extends Controller
 
         $sucursal = Sucursal::query()->create($payload);
         $this->auditoriaService->registrar(
-            modulo: 'SUCURSALES',
             accion: 'CREAR',
             entidad: 'Sucursal',
             entidadId: $sucursal->id,
             descripcion: 'Sucursal creada correctamente.',
-            valoresNuevos: $sucursal->toArray(),
+            datosDespues: $sucursal->toArray(),
         );
 
         return response()->json([
@@ -90,13 +89,12 @@ class SucursalController extends Controller
         $sucursalModel->fill($request->validated());
         $sucursalModel->save();
         $this->auditoriaService->registrar(
-            modulo: 'SUCURSALES',
-            accion: 'ACTUALIZAR',
+            accion: 'EDITAR',
             entidad: 'Sucursal',
             entidadId: $sucursalModel->id,
             descripcion: 'Sucursal actualizada correctamente.',
-            valoresAnteriores: $valoresAnteriores,
-            valoresNuevos: $sucursalModel->fresh()?->toArray(),
+            datosAntes: $valoresAnteriores,
+            datosDespues: $sucursalModel->fresh()?->toArray(),
         );
 
         return response()->json([
@@ -120,13 +118,12 @@ class SucursalController extends Controller
         $valoresAnteriores = $sucursalModel->toArray();
         $sucursalModel->forceFill(['activo' => false])->save();
         $this->auditoriaService->registrar(
-            modulo: 'SUCURSALES',
-            accion: 'DESACTIVAR',
+            accion: 'ELIMINAR_LOGICO',
             entidad: 'Sucursal',
             entidadId: $sucursalModel->id,
             descripcion: 'Sucursal desactivada correctamente.',
-            valoresAnteriores: $valoresAnteriores,
-            valoresNuevos: $sucursalModel->fresh()?->toArray(),
+            datosAntes: $valoresAnteriores,
+            datosDespues: $sucursalModel->fresh()?->toArray(),
         );
 
         return response()->json([
@@ -141,13 +138,12 @@ class SucursalController extends Controller
         $valoresAnteriores = $sucursalModel->toArray();
         $sucursalModel->forceFill(['activo' => true])->save();
         $this->auditoriaService->registrar(
-            modulo: 'SUCURSALES',
-            accion: 'REACTIVAR',
+            accion: 'CAMBIAR_ESTATUS',
             entidad: 'Sucursal',
             entidadId: $sucursalModel->id,
             descripcion: 'Sucursal reactivada correctamente.',
-            valoresAnteriores: $valoresAnteriores,
-            valoresNuevos: $sucursalModel->fresh()?->toArray(),
+            datosAntes: $valoresAnteriores,
+            datosDespues: $sucursalModel->fresh()?->toArray(),
         );
 
         return response()->json([

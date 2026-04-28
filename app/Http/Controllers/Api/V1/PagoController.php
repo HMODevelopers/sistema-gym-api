@@ -225,12 +225,11 @@ class PagoController extends Controller
         $this->loadRelationsForModel($pago);
 
         $this->auditoriaService->registrar(
-            modulo: 'PAGOS',
-            accion: 'REGISTRAR',
+            accion: 'REGISTRAR_PAGO',
             entidad: 'Pago',
             entidadId: $pago->id,
             descripcion: 'Pago registrado correctamente.',
-            valoresNuevos: $pago->toArray(),
+            datosDespues: $pago->toArray(),
             sucursalId: (int) ($pago->sucursal_id ?? 0) ?: null,
         );
 
@@ -278,13 +277,12 @@ class PagoController extends Controller
         $this->loadRelationsForModel($pagoModel);
 
         $this->auditoriaService->registrar(
-            modulo: 'PAGOS',
-            accion: 'CANCELAR',
+            accion: 'CANCELAR_PAGO',
             entidad: 'Pago',
             entidadId: $pagoModel->id,
             descripcion: 'Pago cancelado correctamente.',
-            valoresAnteriores: $valoresAnteriores,
-            valoresNuevos: [
+            datosAntes: $valoresAnteriores,
+            datosDespues: [
                 'estatus' => $pagoModel->estatus,
                 'motivo_cancelacion' => $pagoModel->motivo_cancelacion,
             ],

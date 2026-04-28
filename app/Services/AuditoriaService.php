@@ -2,7 +2,8 @@
 
 namespace App\Services;
 
-use App\Models\BitacoraEvento;
+use App\Enums\AuditoriaAccion;
+use App\Models\AuditoriaEvento;
 use App\Models\Usuario;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Log;
@@ -24,21 +25,26 @@ class AuditoriaService
         'secreto',
         'credential',
         'credencial',
+        'api_key',
+        'private_key',
     ];
 
     public function registrar(
-        string $modulo,
+        string $entidad,
         string $accion,
-        ?string $entidad = null,
         ?int $entidadId = null,
         ?string $descripcion = null,
-        ?array $valoresAnteriores = null,
-        ?array $valoresNuevos = null,
+        ?array $datosAntes = null,
+        ?array $datosDespues = null,
         ?int $sucursalId = null,
         ?int $usuarioId = null,
     ): void {
         try {
-            if (! Schema::hasTable('bitacora_eventos')) {
+            if (! Schema::hasTable('auditoria_eventos')) {
+                return;
+            }
+
+            if (! in_array($accion, array_column(AuditoriaAccion::cases(), 'value'), true)) {
                 return;
             }
 
@@ -53,33 +59,22 @@ class AuditoriaService
                 $sucursalId = $usuario->sucursal_id;
             }
 
-            $requestId = null;
-            if ($request) {
-                $requestId = $request->headers->get('X-Request-Id')
-                    ?? $request->headers->get('X-Correlation-Id');
-            }
-
-            BitacoraEvento::query()->create([
+            AuditoriaEvento::query()->create([
                 'usuario_id' => $usuarioId,
                 'sucursal_id' => $sucursalId,
-                'modulo' => mb_strtoupper(trim($modulo)),
-                'accion' => mb_strtoupper(trim($accion)),
-                'entidad' => $entidad ? trim($entidad) : null,
+                'entidad' => trim($entidad),
                 'entidad_id' => $entidadId,
+                'accion' => mb_strtoupper(trim($accion)),
                 'descripcion' => $descripcion ? trim($descripcion) : null,
-                'valores_anteriores' => $this->sanitizePayload($valoresAnteriores),
-                'valores_nuevos' => $this->sanitizePayload($valoresNuevos),
+                'datos_antes' => $this->sanitizePayload($datosAntes),
+                'datos_despues' => $this->sanitizePayload($datosDespues),
                 'ip' => $request?->ip(),
                 'user_agent' => $request?->userAgent(),
-                'metodo_http' => $request?->method(),
-                'ruta' => $request?->path(),
-                'request_id' => $requestId,
             ]);
         } catch (\Throwable $exception) {
             Log::warning('No fue posible registrar evento de auditoría.', [
-                'modulo' => $modulo,
-                'accion' => $accion,
                 'entidad' => $entidad,
+                'accion' => $accion,
                 'entidad_id' => $entidadId,
                 'error' => $exception->getMessage(),
             ]);

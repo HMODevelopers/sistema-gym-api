@@ -81,12 +81,11 @@ class PlanController extends Controller
 
         $plan = Plan::query()->create($payload);
         $this->auditoriaService->registrar(
-            modulo: 'PLANES',
             accion: 'CREAR',
             entidad: 'Plan',
             entidadId: $plan->id,
             descripcion: 'Plan creado correctamente.',
-            valoresNuevos: $plan->toArray(),
+            datosDespues: $plan->toArray(),
         );
 
         return response()->json([
@@ -102,13 +101,12 @@ class PlanController extends Controller
         $planModel->fill($this->sanitizePayload($request->validated()));
         $planModel->save();
         $this->auditoriaService->registrar(
-            modulo: 'PLANES',
-            accion: 'ACTUALIZAR',
+            accion: 'EDITAR',
             entidad: 'Plan',
             entidadId: $planModel->id,
             descripcion: 'Plan actualizado correctamente.',
-            valoresAnteriores: $valoresAnteriores,
-            valoresNuevos: $planModel->fresh()?->toArray(),
+            datosAntes: $valoresAnteriores,
+            datosDespues: $planModel->fresh()?->toArray(),
         );
 
         return response()->json([
@@ -125,13 +123,12 @@ class PlanController extends Controller
         // TODO: Validar impacto operativo cuando existan membresías/pagos ligados a planes activos.
         $planModel->forceFill(['activo' => false])->save();
         $this->auditoriaService->registrar(
-            modulo: 'PLANES',
-            accion: 'DESACTIVAR',
+            accion: 'ELIMINAR_LOGICO',
             entidad: 'Plan',
             entidadId: $planModel->id,
             descripcion: 'Plan desactivado correctamente.',
-            valoresAnteriores: $valoresAnteriores,
-            valoresNuevos: $planModel->fresh()?->toArray(),
+            datosAntes: $valoresAnteriores,
+            datosDespues: $planModel->fresh()?->toArray(),
         );
 
         return response()->json([
@@ -146,13 +143,12 @@ class PlanController extends Controller
         $valoresAnteriores = $planModel->toArray();
         $planModel->forceFill(['activo' => true])->save();
         $this->auditoriaService->registrar(
-            modulo: 'PLANES',
-            accion: 'REACTIVAR',
+            accion: 'CAMBIAR_ESTATUS',
             entidad: 'Plan',
             entidadId: $planModel->id,
             descripcion: 'Plan reactivado correctamente.',
-            valoresAnteriores: $valoresAnteriores,
-            valoresNuevos: $planModel->fresh()?->toArray(),
+            datosAntes: $valoresAnteriores,
+            datosDespues: $planModel->fresh()?->toArray(),
         );
 
         return response()->json([

@@ -4,8 +4,8 @@ namespace App\Http\Controllers\Api\V1;
 
 use App\Exceptions\ApiException;
 use App\Http\Controllers\Controller;
-use App\Http\Resources\BitacoraEventoResource;
-use App\Models\BitacoraEvento;
+use App\Http\Resources\AuditoriaEventoResource;
+use App\Models\AuditoriaEvento;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
@@ -14,7 +14,7 @@ class AuditoriaController extends Controller
     public function index(Request $request): JsonResponse
     {
         $perPage = min(max((int) $request->integer('per_page', 15), 1), 100);
-        $query = BitacoraEvento::query()->with([
+        $query = AuditoriaEvento::query()->with([
             'usuario:id,nombre,apellido_paterno,apellido_materno,username',
             'sucursal:id,nombre,clave',
         ]);
@@ -22,28 +22,22 @@ class AuditoriaController extends Controller
         $search = trim((string) $request->query('q', ''));
         if ($search !== '') {
             $query->where(function ($builder) use ($search): void {
-                $builder->where('descripcion', 'like', "%{$search}%")
-                    ->orWhere('modulo', 'like', "%{$search}%")
+                $builder->where('entidad', 'like', "%{$search}%")
                     ->orWhere('accion', 'like', "%{$search}%")
-                    ->orWhere('entidad', 'like', "%{$search}%")
-                    ->orWhere('ruta', 'like', "%{$search}%");
+                    ->orWhere('descripcion', 'like', "%{$search}%");
             });
         }
 
-        foreach (['usuario_id', 'sucursal_id', 'entidad_id'] as $filter) {
+        foreach (['sucursal_id', 'usuario_id', 'entidad_id'] as $filter) {
             if ($request->filled($filter)) {
                 $query->where($filter, (int) $request->query($filter));
             }
         }
 
-        foreach (['modulo', 'accion'] as $filter) {
+        foreach (['entidad', 'accion'] as $filter) {
             if ($request->filled($filter)) {
-                $query->where($filter, mb_strtoupper(trim((string) $request->query($filter))));
+                $query->where($filter, trim((string) $request->query($filter)));
             }
-        }
-
-        if ($request->filled('entidad')) {
-            $query->where('entidad', trim((string) $request->query('entidad')));
         }
 
         if ($request->filled('fecha_desde')) {
@@ -61,7 +55,7 @@ class AuditoriaController extends Controller
 
         return response()->json([
             'message' => 'Eventos de auditoría obtenidos correctamente.',
-            'data' => BitacoraEventoResource::collection($paginator->items()),
+            'data' => AuditoriaEventoResource::collection($paginator->items()),
             'meta' => [
                 'current_page' => $paginator->currentPage(),
                 'per_page' => $paginator->perPage(),
@@ -73,7 +67,7 @@ class AuditoriaController extends Controller
 
     public function show(int $evento): JsonResponse
     {
-        $registro = BitacoraEvento::query()
+        $registro = AuditoriaEvento::query()
             ->with([
                 'usuario:id,nombre,apellido_paterno,apellido_materno,username',
                 'sucursal:id,nombre,clave',
@@ -86,7 +80,7 @@ class AuditoriaController extends Controller
 
         return response()->json([
             'message' => 'Evento de auditoría obtenido correctamente.',
-            'data' => new BitacoraEventoResource($registro),
+            'data' => new AuditoriaEventoResource($registro),
         ]);
     }
 }
