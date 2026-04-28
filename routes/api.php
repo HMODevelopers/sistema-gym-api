@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Api\V1\AccesoController;
 use App\Http\Controllers\Api\V1\AuthController;
+use App\Http\Controllers\Api\V1\BiometricoController;
 use App\Http\Controllers\Api\V1\ClienteController;
 use App\Http\Controllers\Api\V1\DispositivoController;
 use App\Http\Controllers\Api\V1\MembresiaController;
@@ -57,6 +58,7 @@ Route::prefix('v1')->group(function (): void {
         Route::get('{cliente}/membresias', [MembresiaController::class, 'porCliente'])->middleware('permission:membresias.ver');
         Route::get('{cliente}/pagos', [PagoController::class, 'porCliente'])->middleware('permission:pagos.ver');
         Route::get('{cliente}/accesos', [AccesoController::class, 'porCliente'])->middleware('permission:accesos.ver');
+        Route::get('{cliente}/biometricos', [BiometricoController::class, 'porCliente'])->middleware('permission:biometricos.ver');
         Route::post('/', [ClienteController::class, 'store'])->middleware('permission:clientes.crear');
         Route::match(['put', 'patch'], '{cliente}', [ClienteController::class, 'update'])->middleware('permission:clientes.editar');
         Route::patch('{cliente}/cambiar-estatus', [ClienteController::class, 'cambiarEstatus'])->middleware('permission:clientes.cambiar_estatus');
@@ -100,6 +102,16 @@ Route::prefix('v1')->group(function (): void {
         Route::patch('{dispositivo}/cambiar-estatus', [DispositivoController::class, 'cambiarEstatus'])->middleware('permission:dispositivos.editar');
         Route::patch('{dispositivo}/desactivar', [DispositivoController::class, 'desactivar'])->middleware('permission:dispositivos.desactivar');
         Route::patch('{dispositivo}/reactivar', [DispositivoController::class, 'reactivar'])->middleware('permission:dispositivos.editar');
+    });
+
+
+    Route::prefix('biometricos')->middleware('auth:sanctum')->group(function (): void {
+        Route::get('/', [BiometricoController::class, 'index'])->middleware('permission:biometricos.ver');
+        Route::get('{biometrico}', [BiometricoController::class, 'show'])->middleware('permission:biometricos.ver');
+        Route::post('enrolar', [BiometricoController::class, 'enrolar'])->middleware('permission:biometricos.enrolar');
+        Route::patch('{biometrico}/marcar-principal', [BiometricoController::class, 'marcarPrincipal'])->middleware('permission:biometricos.enrolar');
+        Route::patch('{biometrico}/desactivar', [BiometricoController::class, 'desactivar'])->middleware('permission:biometricos.eliminar');
+        Route::patch('{biometrico}/revocar', [BiometricoController::class, 'revocar'])->middleware('permission:biometricos.eliminar');
     });
 
     Route::prefix('accesos')->middleware('auth:sanctum')->group(function (): void {
