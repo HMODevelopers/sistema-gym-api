@@ -21,6 +21,7 @@ class DatabaseSeeder extends Seeder
             RolPermisosSeeder::class,
             MetodosPagoSeeder::class,
             PlanesSeeder::class,
+            DispositivosSeeder::class,
             UsuariosPruebaSeeder::class,
         ]);
     }

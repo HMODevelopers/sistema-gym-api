@@ -3,6 +3,7 @@
 use App\Http\Controllers\Api\V1\AccesoController;
 use App\Http\Controllers\Api\V1\AuthController;
 use App\Http\Controllers\Api\V1\ClienteController;
+use App\Http\Controllers\Api\V1\DispositivoController;
 use App\Http\Controllers\Api\V1\MembresiaController;
 use App\Http\Controllers\Api\V1\MetodoPagoController;
 use App\Http\Controllers\Api\V1\PagoController;
@@ -88,6 +89,17 @@ Route::prefix('v1')->group(function (): void {
         Route::post('/', [PagoController::class, 'store'])->middleware('permission:pagos.registrar');
         Route::get('{pago}', [PagoController::class, 'show'])->middleware('permission:pagos.ver');
         Route::patch('{pago}/cancelar', [PagoController::class, 'cancelar'])->middleware('permission:pagos.cancelar');
+    });
+
+
+    Route::prefix('dispositivos')->middleware('auth:sanctum')->group(function (): void {
+        Route::get('/', [DispositivoController::class, 'index'])->middleware('permission:dispositivos.ver');
+        Route::get('{dispositivo}', [DispositivoController::class, 'show'])->middleware('permission:dispositivos.ver');
+        Route::post('/', [DispositivoController::class, 'store'])->middleware('permission:dispositivos.crear');
+        Route::match(['put', 'patch'], '{dispositivo}', [DispositivoController::class, 'update'])->middleware('permission:dispositivos.editar');
+        Route::patch('{dispositivo}/cambiar-estatus', [DispositivoController::class, 'cambiarEstatus'])->middleware('permission:dispositivos.editar');
+        Route::patch('{dispositivo}/desactivar', [DispositivoController::class, 'desactivar'])->middleware('permission:dispositivos.desactivar');
+        Route::patch('{dispositivo}/reactivar', [DispositivoController::class, 'reactivar'])->middleware('permission:dispositivos.editar');
     });
 
     Route::prefix('accesos')->middleware('auth:sanctum')->group(function (): void {
