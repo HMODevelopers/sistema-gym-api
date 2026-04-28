@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Api\V1\AuthController;
 use App\Http\Controllers\Api\V1\ClienteController;
+use App\Http\Controllers\Api\V1\MembresiaController;
 use App\Http\Controllers\Api\V1\MetodoPagoController;
 use App\Http\Controllers\Api\V1\PlanController;
 use App\Http\Controllers\Api\V1\SucursalController;
@@ -50,11 +51,23 @@ Route::prefix('v1')->group(function (): void {
     Route::prefix('clientes')->middleware('auth:sanctum')->group(function (): void {
         Route::get('/', [ClienteController::class, 'index'])->middleware('permission:clientes.ver');
         Route::get('{cliente}', [ClienteController::class, 'show'])->middleware('permission:clientes.ver');
+        Route::get('{cliente}/membresias', [MembresiaController::class, 'porCliente'])->middleware('permission:membresias.ver');
         Route::post('/', [ClienteController::class, 'store'])->middleware('permission:clientes.crear');
         Route::match(['put', 'patch'], '{cliente}', [ClienteController::class, 'update'])->middleware('permission:clientes.editar');
         Route::patch('{cliente}/cambiar-estatus', [ClienteController::class, 'cambiarEstatus'])->middleware('permission:clientes.cambiar_estatus');
         Route::patch('{cliente}/desactivar', [ClienteController::class, 'desactivar'])->middleware('permission:clientes.desactivar');
         Route::patch('{cliente}/reactivar', [ClienteController::class, 'reactivar'])->middleware('permission:clientes.cambiar_estatus');
+    });
+
+    Route::prefix('membresias')->middleware('auth:sanctum')->group(function (): void {
+        Route::get('/', [MembresiaController::class, 'index'])->middleware('permission:membresias.ver');
+        Route::get('{membresia}', [MembresiaController::class, 'show'])->middleware('permission:membresias.ver');
+        Route::post('/', [MembresiaController::class, 'store'])->middleware('permission:membresias.crear');
+        Route::match(['put', 'patch'], '{membresia}', [MembresiaController::class, 'update'])->middleware('permission:membresias.editar');
+        Route::patch('{membresia}/renovar', [MembresiaController::class, 'renovar'])->middleware('permission:membresias.renovar');
+        Route::patch('{membresia}/suspender', [MembresiaController::class, 'suspender'])->middleware('permission:membresias.suspender');
+        Route::patch('{membresia}/cancelar', [MembresiaController::class, 'cancelar'])->middleware('permission:membresias.cancelar');
+        Route::patch('{membresia}/reactivar', [MembresiaController::class, 'reactivar'])->middleware('permission:membresias.editar');
     });
 
     Route::prefix('metodos-pago')->middleware('auth:sanctum')->group(function (): void {
