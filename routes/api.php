@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Api\V1\AuthController;
+use App\Http\Controllers\Api\V1\MetodoPagoController;
 use App\Http\Controllers\Api\V1\PlanController;
 use App\Http\Controllers\Api\V1\SucursalController;
 use Illuminate\Support\Facades\Route;
@@ -43,5 +44,13 @@ Route::prefix('v1')->group(function (): void {
         Route::patch('{sucursal}/desactivar', [SucursalController::class, 'desactivar'])->middleware('permission:sucursales.desactivar');
         Route::patch('{sucursal}/reactivar', [SucursalController::class, 'reactivar'])->middleware('permission:sucursales.editar');
     });
-});
 
+    Route::prefix('metodos-pago')->middleware('auth:sanctum')->group(function (): void {
+        Route::get('/', [MetodoPagoController::class, 'index'])->middleware('permission:metodos_pago.ver');
+        Route::get('{metodoPago}', [MetodoPagoController::class, 'show'])->middleware('permission:metodos_pago.ver');
+        Route::post('/', [MetodoPagoController::class, 'store'])->middleware('permission:metodos_pago.crear');
+        Route::match(['put', 'patch'], '{metodoPago}', [MetodoPagoController::class, 'update'])->middleware('permission:metodos_pago.editar');
+        Route::patch('{metodoPago}/desactivar', [MetodoPagoController::class, 'desactivar'])->middleware('permission:metodos_pago.desactivar');
+        Route::patch('{metodoPago}/reactivar', [MetodoPagoController::class, 'reactivar'])->middleware('permission:metodos_pago.editar');
+    });
+});
