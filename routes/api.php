@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Api\V1\AuthController;
+use App\Http\Controllers\Api\V1\PlanController;
 use App\Http\Controllers\Api\V1\SucursalController;
 use Illuminate\Support\Facades\Route;
 
@@ -24,6 +25,16 @@ Route::prefix('v1/rbac')
     });
 
 Route::prefix('v1')->group(function (): void {
+
+    Route::prefix('planes')->middleware('auth:sanctum')->group(function (): void {
+        Route::get('/', [PlanController::class, 'index'])->middleware('permission:planes.ver');
+        Route::get('{plan}', [PlanController::class, 'show'])->middleware('permission:planes.ver');
+        Route::post('/', [PlanController::class, 'store'])->middleware('permission:planes.crear');
+        Route::match(['put', 'patch'], '{plan}', [PlanController::class, 'update'])->middleware('permission:planes.editar');
+        Route::patch('{plan}/desactivar', [PlanController::class, 'desactivar'])->middleware('permission:planes.desactivar');
+        Route::patch('{plan}/reactivar', [PlanController::class, 'reactivar'])->middleware('permission:planes.editar');
+    });
+
     Route::prefix('sucursales')->middleware('auth:sanctum')->group(function (): void {
         Route::get('/', [SucursalController::class, 'index'])->middleware('permission:sucursales.ver');
         Route::get('{sucursal}', [SucursalController::class, 'show'])->middleware('permission:sucursales.ver');
