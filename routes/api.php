@@ -4,6 +4,7 @@ use App\Http\Controllers\Api\V1\AuthController;
 use App\Http\Controllers\Api\V1\ClienteController;
 use App\Http\Controllers\Api\V1\MembresiaController;
 use App\Http\Controllers\Api\V1\MetodoPagoController;
+use App\Http\Controllers\Api\V1\PagoController;
 use App\Http\Controllers\Api\V1\PlanController;
 use App\Http\Controllers\Api\V1\SucursalController;
 use Illuminate\Support\Facades\Route;
@@ -52,6 +53,7 @@ Route::prefix('v1')->group(function (): void {
         Route::get('/', [ClienteController::class, 'index'])->middleware('permission:clientes.ver');
         Route::get('{cliente}', [ClienteController::class, 'show'])->middleware('permission:clientes.ver');
         Route::get('{cliente}/membresias', [MembresiaController::class, 'porCliente'])->middleware('permission:membresias.ver');
+        Route::get('{cliente}/pagos', [PagoController::class, 'porCliente'])->middleware('permission:pagos.ver');
         Route::post('/', [ClienteController::class, 'store'])->middleware('permission:clientes.crear');
         Route::match(['put', 'patch'], '{cliente}', [ClienteController::class, 'update'])->middleware('permission:clientes.editar');
         Route::patch('{cliente}/cambiar-estatus', [ClienteController::class, 'cambiarEstatus'])->middleware('permission:clientes.cambiar_estatus');
@@ -77,5 +79,12 @@ Route::prefix('v1')->group(function (): void {
         Route::match(['put', 'patch'], '{metodoPago}', [MetodoPagoController::class, 'update'])->middleware('permission:metodos_pago.editar');
         Route::patch('{metodoPago}/desactivar', [MetodoPagoController::class, 'desactivar'])->middleware('permission:metodos_pago.desactivar');
         Route::patch('{metodoPago}/reactivar', [MetodoPagoController::class, 'reactivar'])->middleware('permission:metodos_pago.editar');
+    });
+
+    Route::prefix('pagos')->middleware('auth:sanctum')->group(function (): void {
+        Route::get('/', [PagoController::class, 'index'])->middleware('permission:pagos.ver');
+        Route::post('/', [PagoController::class, 'store'])->middleware('permission:pagos.registrar');
+        Route::get('{pago}', [PagoController::class, 'show'])->middleware('permission:pagos.ver');
+        Route::patch('{pago}/cancelar', [PagoController::class, 'cancelar'])->middleware('permission:pagos.cancelar');
     });
 });
