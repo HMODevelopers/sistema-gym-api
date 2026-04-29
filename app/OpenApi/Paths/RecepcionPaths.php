@@ -1,0 +1,7 @@
+<?php
+namespace App\OpenApi\Paths;
+use OpenApi\Attributes as OA;
+class RecepcionPaths {
+#[OA\Get(path:'/api/v1/recepcion/clientes/buscar',summary:'buscarClientes',description:'Permiso requerido: clientes.ver.',security:[['sanctumBearer'=>[]]],tags:['Recepción'],responses:[new OA\Response(response:200,description:'OK'),new OA\Response(response:401,description:'No autenticado'),new OA\Response(response:403,description:'Sin permiso'),new OA\Response(response:404,description:'No encontrado'),new OA\Response(response:422,description:'Datos inválidos')])] public function buscarClientes():void{}
+#[OA\Get(path:'/api/v1/recepcion/clientes/{cliente}/resumen',summary:'resumenCliente',description:'Permiso requerido: clientes.ver.',security:[['sanctumBearer'=>[]]],tags:['Recepción'],parameters:[new OA\Parameter(name:'cliente',in:'path',required:true,schema:new OA\Schema(type:'integer'))],responses:[new OA\Response(response:200,description:'OK'),new OA\Response(response:401,description:'No autenticado'),new OA\Response(response:403,description:'Sin permiso'),new OA\Response(response:404,description:'No encontrado'),new OA\Response(response:422,description:'Datos inválidos')])] public function resumenCliente():void{}
+}

@@ -12,34 +12,45 @@
         }
     ],
     "paths": {
-        "/api/v1/auth/login": {
+        "/api/v1/accesos": {
+            "get": {
+                "tags": [
+                    "Accesos"
+                ],
+                "summary": "index",
+                "description": "Permiso requerido: accesos.ver.",
+                "operationId": "0a5b0d03b2a3830ae825d2d2b5fa7916",
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    },
+                    "401": {
+                        "description": "No autenticado"
+                    },
+                    "403": {
+                        "description": "Sin permiso"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctumBearer": []
+                    }
+                ]
+            }
+        },
+        "/api/v1/accesos/validar": {
             "post": {
                 "tags": [
-                    "Auth"
+                    "Accesos"
                 ],
-                "summary": "Iniciar sesión",
-                "description": "Autentica a un usuario y devuelve token Sanctum, datos del usuario, roles y permisos.",
-                "operationId": "authLogin",
+                "summary": "validar",
+                "description": "Permiso requerido: accesos.validar.",
+                "operationId": "2e52bc0f37214e9b07318691a8195885",
                 "requestBody": {
                     "required": true,
                     "content": {
                         "application/json": {
                             "schema": {
-                                "required": [
-                                    "login",
-                                    "password"
-                                ],
-                                "properties": {
-                                    "login": {
-                                        "type": "string",
-                                        "example": "admin@sistemagym.local"
-                                    },
-                                    "password": {
-                                        "type": "string",
-                                        "format": "password",
-                                        "example": "password"
-                                    }
-                                },
                                 "type": "object"
                             }
                         }
@@ -47,42 +58,3126 @@
                 },
                 "responses": {
                     "200": {
-                        "description": "Login exitoso",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "properties": {
-                                        "message": {
-                                            "type": "string",
-                                            "example": "Login exitoso"
-                                        },
-                                        "token": {
-                                            "type": "string",
-                                            "example": "1|abc123token"
-                                        }
-                                    },
-                                    "type": "object"
-                                }
-                            }
-                        }
+                        "description": "OK"
                     },
-                    "422": {
-                        "description": "Error de validación",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "properties": {
-                                        "message": {
-                                            "type": "string",
-                                            "example": "The given data was invalid."
-                                        }
-                                    },
-                                    "type": "object"
-                                }
+                    "401": {
+                        "description": "No autenticado"
+                    },
+                    "403": {
+                        "description": "Sin permiso"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctumBearer": []
+                    }
+                ]
+            }
+        },
+        "/api/v1/accesos/{acceso}": {
+            "get": {
+                "tags": [
+                    "Accesos"
+                ],
+                "summary": "show",
+                "description": "Permiso requerido: accesos.ver.",
+                "operationId": "4efd35fd38a4ac0e72efc5271291c8a8",
+                "parameters": [
+                    {
+                        "name": "acceso",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    },
+                    "401": {
+                        "description": "No autenticado"
+                    },
+                    "403": {
+                        "description": "Sin permiso"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctumBearer": []
+                    }
+                ]
+            }
+        },
+        "/api/v1/auditoria": {
+            "get": {
+                "tags": [
+                    "Auditoría"
+                ],
+                "summary": "index",
+                "description": "Permiso requerido: auditoria.ver.",
+                "operationId": "559589aa757a966908098c237c732985",
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    },
+                    "401": {
+                        "description": "No autenticado"
+                    },
+                    "403": {
+                        "description": "Sin permiso"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctumBearer": []
+                    }
+                ]
+            }
+        },
+        "/api/v1/auditoria/{evento}": {
+            "get": {
+                "tags": [
+                    "Auditoría"
+                ],
+                "summary": "show",
+                "description": "Permiso requerido: auditoria.ver.",
+                "operationId": "c948e815c562d987d0c8fa2a1c140e1a",
+                "parameters": [
+                    {
+                        "name": "evento",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    },
+                    "401": {
+                        "description": "No autenticado"
+                    },
+                    "403": {
+                        "description": "Sin permiso"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctumBearer": []
+                    }
+                ]
+            }
+        },
+        "/api/v1/auth/login": {
+            "post": {
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "Iniciar sesión",
+                "description": "Sin permiso requerido.",
+                "operationId": "036401835ac13c05a387f7941197c996",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object"
                             }
                         }
                     }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Login exitoso"
+                    },
+                    "401": {
+                        "description": "Credenciales inválidas"
+                    },
+                    "422": {
+                        "description": "Datos inválidos"
+                    }
                 }
+            }
+        },
+        "/api/v1/auth/me": {
+            "get": {
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "Usuario autenticado",
+                "description": "Permiso requerido: autenticado.",
+                "operationId": "74db182b0236ec50cd763eb3cb8ec011",
+                "responses": {
+                    "200": {
+                        "description": "Usuario obtenido correctamente"
+                    },
+                    "401": {
+                        "description": "No autenticado"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctumBearer": []
+                    }
+                ]
+            }
+        },
+        "/api/v1/auth/logout": {
+            "post": {
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "Cerrar sesión",
+                "description": "Permiso requerido: autenticado.",
+                "operationId": "4454557a28ee0af6109266890e53d192",
+                "responses": {
+                    "200": {
+                        "description": "Logout exitoso"
+                    },
+                    "401": {
+                        "description": "No autenticado"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctumBearer": []
+                    }
+                ]
+            }
+        },
+        "/api/v1/biometricos": {
+            "get": {
+                "tags": [
+                    "Biométricos"
+                ],
+                "summary": "index",
+                "description": "Permiso requerido: biometricos.ver.",
+                "operationId": "9e59f41e02434104af46d19dde713e3b",
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    },
+                    "401": {
+                        "description": "No autenticado"
+                    },
+                    "403": {
+                        "description": "Sin permiso"
+                    },
+                    "404": {
+                        "description": "No encontrado"
+                    },
+                    "422": {
+                        "description": "Datos inválidos"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctumBearer": []
+                    }
+                ]
+            }
+        },
+        "/api/v1/biometricos/enrolar": {
+            "post": {
+                "tags": [
+                    "Biométricos"
+                ],
+                "summary": "enrolar",
+                "description": "Permiso requerido: biometricos.enrolar.",
+                "operationId": "e6dbf82acc51ad104f153488b2b137f2",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    },
+                    "401": {
+                        "description": "No autenticado"
+                    },
+                    "403": {
+                        "description": "Sin permiso"
+                    },
+                    "404": {
+                        "description": "No encontrado"
+                    },
+                    "422": {
+                        "description": "Datos inválidos"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctumBearer": []
+                    }
+                ]
+            }
+        },
+        "/api/v1/biometricos/{biometrico}": {
+            "get": {
+                "tags": [
+                    "Biométricos"
+                ],
+                "summary": "show",
+                "description": "Permiso requerido: biometricos.ver.",
+                "operationId": "1ea0bbe4b053fe3207472e816070072b",
+                "parameters": [
+                    {
+                        "name": "biometrico",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    },
+                    "401": {
+                        "description": "No autenticado"
+                    },
+                    "403": {
+                        "description": "Sin permiso"
+                    },
+                    "404": {
+                        "description": "No encontrado"
+                    },
+                    "422": {
+                        "description": "Datos inválidos"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctumBearer": []
+                    }
+                ]
+            }
+        },
+        "/api/v1/biometricos/{biometrico}/desactivar": {
+            "patch": {
+                "tags": [
+                    "Biométricos"
+                ],
+                "summary": "desactivar",
+                "description": "Permiso requerido: biometricos.eliminar.",
+                "operationId": "edef81d7739713e2c40d30cf68a7e96b",
+                "parameters": [
+                    {
+                        "name": "biometrico",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    },
+                    "401": {
+                        "description": "No autenticado"
+                    },
+                    "403": {
+                        "description": "Sin permiso"
+                    },
+                    "404": {
+                        "description": "No encontrado"
+                    },
+                    "422": {
+                        "description": "Datos inválidos"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctumBearer": []
+                    }
+                ]
+            }
+        },
+        "/api/v1/biometricos/{biometrico}/marcar-principal": {
+            "patch": {
+                "tags": [
+                    "Biométricos"
+                ],
+                "summary": "marcarPrincipal",
+                "description": "Permiso requerido: biometricos.enrolar.",
+                "operationId": "3b089cdd5a884bfade04d595fff1dbae",
+                "parameters": [
+                    {
+                        "name": "biometrico",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    },
+                    "401": {
+                        "description": "No autenticado"
+                    },
+                    "403": {
+                        "description": "Sin permiso"
+                    },
+                    "404": {
+                        "description": "No encontrado"
+                    },
+                    "422": {
+                        "description": "Datos inválidos"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctumBearer": []
+                    }
+                ]
+            }
+        },
+        "/api/v1/biometricos/{biometrico}/revocar": {
+            "patch": {
+                "tags": [
+                    "Biométricos"
+                ],
+                "summary": "revocar",
+                "description": "Permiso requerido: biometricos.eliminar.",
+                "operationId": "72cc37377fcd883bc7d109d5e8195887",
+                "parameters": [
+                    {
+                        "name": "biometrico",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    },
+                    "401": {
+                        "description": "No autenticado"
+                    },
+                    "403": {
+                        "description": "Sin permiso"
+                    },
+                    "404": {
+                        "description": "No encontrado"
+                    },
+                    "422": {
+                        "description": "Datos inválidos"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctumBearer": []
+                    }
+                ]
+            }
+        },
+        "/api/v1/clientes": {
+            "get": {
+                "tags": [
+                    "Clientes"
+                ],
+                "summary": "Listar clientes",
+                "description": "Permiso requerido: clientes.ver.",
+                "operationId": "6454697944a6362b4d2c1178124fc0bd",
+                "parameters": [
+                    {
+                        "name": "q",
+                        "in": "query",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "sucursal_id",
+                        "in": "query",
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "estatus",
+                        "in": "query",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "activo",
+                        "in": "query",
+                        "schema": {
+                            "type": "string",
+                            "enum": [
+                                "true",
+                                "false",
+                                "all"
+                            ]
+                        }
+                    },
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "per_page",
+                        "in": "query",
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Clientes obtenidos correctamente"
+                    },
+                    "401": {
+                        "description": "No autenticado"
+                    },
+                    "403": {
+                        "description": "Sin permiso"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctumBearer": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "Clientes"
+                ],
+                "summary": "Crear cliente",
+                "description": "Permiso requerido: clientes.crear.",
+                "operationId": "27fe1f4e3d979c617d69f4ed061f4d65",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Cliente creado"
+                    },
+                    "422": {
+                        "description": "Datos inválidos"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctumBearer": []
+                    }
+                ]
+            }
+        },
+        "/api/v1/clientes/{cliente}": {
+            "get": {
+                "tags": [
+                    "Clientes"
+                ],
+                "summary": "Ver cliente",
+                "description": "Permiso requerido: clientes.ver.",
+                "operationId": "7e00687dc708671a5b64c22efe3376d2",
+                "parameters": [
+                    {
+                        "name": "cliente",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Cliente obtenido"
+                    },
+                    "404": {
+                        "description": "No encontrado"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctumBearer": []
+                    }
+                ]
+            },
+            "put": {
+                "tags": [
+                    "Clientes"
+                ],
+                "summary": "Actualizar cliente (PUT)",
+                "description": "Permiso requerido: clientes.editar.",
+                "operationId": "68acafebd30cd99e3cfe27d055769e17",
+                "parameters": [
+                    {
+                        "name": "cliente",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Cliente actualizado"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctumBearer": []
+                    }
+                ]
+            },
+            "patch": {
+                "tags": [
+                    "Clientes"
+                ],
+                "summary": "Actualizar cliente (PATCH)",
+                "description": "Permiso requerido: clientes.editar.",
+                "operationId": "615f0cd5a2d7478be26265e2e4b1f81f",
+                "parameters": [
+                    {
+                        "name": "cliente",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Cliente actualizado"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctumBearer": []
+                    }
+                ]
+            }
+        },
+        "/api/v1/clientes/{cliente}/cambiar-estatus": {
+            "patch": {
+                "tags": [
+                    "Clientes"
+                ],
+                "summary": "Cambiar estatus",
+                "description": "Permiso requerido: clientes.cambiar_estatus.",
+                "operationId": "4d7bf21ae1fe967e0edd89087ca4bc08",
+                "parameters": [
+                    {
+                        "name": "cliente",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Estatus actualizado"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctumBearer": []
+                    }
+                ]
+            }
+        },
+        "/api/v1/clientes/{cliente}/desactivar": {
+            "patch": {
+                "tags": [
+                    "Clientes"
+                ],
+                "summary": "Desactivar cliente",
+                "description": "Permiso requerido: clientes.desactivar.",
+                "operationId": "4860157a6a4e88f4462ad30e5e54e24e",
+                "parameters": [
+                    {
+                        "name": "cliente",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Cliente desactivado"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctumBearer": []
+                    }
+                ]
+            }
+        },
+        "/api/v1/clientes/{cliente}/reactivar": {
+            "patch": {
+                "tags": [
+                    "Clientes"
+                ],
+                "summary": "Reactivar cliente",
+                "description": "Permiso requerido: clientes.cambiar_estatus.",
+                "operationId": "4bb468e0ad3fb3328a6ab3739322978a",
+                "parameters": [
+                    {
+                        "name": "cliente",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Cliente reactivado"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctumBearer": []
+                    }
+                ]
+            }
+        },
+        "/api/v1/clientes/{cliente}/membresias": {
+            "get": {
+                "tags": [
+                    "Clientes"
+                ],
+                "summary": "Membresías por cliente",
+                "description": "Permiso requerido: membresias.ver.",
+                "operationId": "68bee6bb58c232a2c1b6639c6e633bc2",
+                "parameters": [
+                    {
+                        "name": "cliente",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Membresías obtenidas"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctumBearer": []
+                    }
+                ]
+            }
+        },
+        "/api/v1/clientes/{cliente}/pagos": {
+            "get": {
+                "tags": [
+                    "Clientes"
+                ],
+                "summary": "Pagos por cliente",
+                "description": "Permiso requerido: pagos.ver.",
+                "operationId": "544af2d876362d2d737ea840083f09ba",
+                "parameters": [
+                    {
+                        "name": "cliente",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Pagos obtenidos"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctumBearer": []
+                    }
+                ]
+            }
+        },
+        "/api/v1/clientes/{cliente}/accesos": {
+            "get": {
+                "tags": [
+                    "Clientes"
+                ],
+                "summary": "Accesos por cliente",
+                "description": "Permiso requerido: accesos.ver.",
+                "operationId": "88f716e55bfeeef6ceec52920f441982",
+                "parameters": [
+                    {
+                        "name": "cliente",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Accesos obtenidos"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctumBearer": []
+                    }
+                ]
+            }
+        },
+        "/api/v1/clientes/{cliente}/biometricos": {
+            "get": {
+                "tags": [
+                    "Clientes"
+                ],
+                "summary": "Biométricos por cliente",
+                "description": "Permiso requerido: biometricos.ver.",
+                "operationId": "f599ab974c06dcedb2f4f85f14578057",
+                "parameters": [
+                    {
+                        "name": "cliente",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Biométricos obtenidos"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctumBearer": []
+                    }
+                ]
+            }
+        },
+        "/api/v1/cortes-caja": {
+            "get": {
+                "tags": [
+                    "Cortes de Caja"
+                ],
+                "summary": "index",
+                "description": "Permiso requerido: pagos.ver.",
+                "operationId": "ed11d3c255f09b80f99862280cca25cd",
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    },
+                    "401": {
+                        "description": "No autenticado"
+                    },
+                    "403": {
+                        "description": "Sin permiso"
+                    },
+                    "404": {
+                        "description": "No encontrado"
+                    },
+                    "422": {
+                        "description": "Datos inválidos"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctumBearer": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "Cortes de Caja"
+                ],
+                "summary": "store",
+                "description": "Permiso requerido: pagos.registrar.",
+                "operationId": "d5a8670fe0654c47381f4e2ddd3bdaca",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    },
+                    "401": {
+                        "description": "No autenticado"
+                    },
+                    "403": {
+                        "description": "Sin permiso"
+                    },
+                    "404": {
+                        "description": "No encontrado"
+                    },
+                    "422": {
+                        "description": "Datos inválidos"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctumBearer": []
+                    }
+                ]
+            }
+        },
+        "/api/v1/cortes-caja/calcular": {
+            "post": {
+                "tags": [
+                    "Cortes de Caja"
+                ],
+                "summary": "calcular",
+                "description": "Permiso requerido: pagos.ver.",
+                "operationId": "a44e0ecd85c2df70c9e2cf9c6817c2a6",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    },
+                    "401": {
+                        "description": "No autenticado"
+                    },
+                    "403": {
+                        "description": "Sin permiso"
+                    },
+                    "404": {
+                        "description": "No encontrado"
+                    },
+                    "422": {
+                        "description": "Datos inválidos"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctumBearer": []
+                    }
+                ]
+            }
+        },
+        "/api/v1/cortes-caja/{corte}": {
+            "get": {
+                "tags": [
+                    "Cortes de Caja"
+                ],
+                "summary": "show",
+                "description": "Permiso requerido: pagos.ver.",
+                "operationId": "02c604429f42fdd8f3bf0e1bfb3fca7e",
+                "parameters": [
+                    {
+                        "name": "corte",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    },
+                    "401": {
+                        "description": "No autenticado"
+                    },
+                    "403": {
+                        "description": "Sin permiso"
+                    },
+                    "404": {
+                        "description": "No encontrado"
+                    },
+                    "422": {
+                        "description": "Datos inválidos"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctumBearer": []
+                    }
+                ]
+            }
+        },
+        "/api/v1/cortes-caja/{corte}/cancelar": {
+            "patch": {
+                "tags": [
+                    "Cortes de Caja"
+                ],
+                "summary": "cancelar",
+                "description": "Permiso requerido: pagos.cancelar.",
+                "operationId": "56f0c846f70ffd0e5c7e404f953fcaf4",
+                "parameters": [
+                    {
+                        "name": "corte",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    },
+                    "401": {
+                        "description": "No autenticado"
+                    },
+                    "403": {
+                        "description": "Sin permiso"
+                    },
+                    "404": {
+                        "description": "No encontrado"
+                    },
+                    "422": {
+                        "description": "Datos inválidos"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctumBearer": []
+                    }
+                ]
+            }
+        },
+        "/api/v1/cortes-caja/{corte}/exportar": {
+            "get": {
+                "tags": [
+                    "Cortes de Caja"
+                ],
+                "summary": "exportar",
+                "description": "Permiso requerido: reportes.exportar.",
+                "operationId": "f29cad9cdd28a51b6aa004f296deb0a4",
+                "parameters": [
+                    {
+                        "name": "corte",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    },
+                    "401": {
+                        "description": "No autenticado"
+                    },
+                    "403": {
+                        "description": "Sin permiso"
+                    },
+                    "404": {
+                        "description": "No encontrado"
+                    },
+                    "422": {
+                        "description": "Datos inválidos"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctumBearer": []
+                    }
+                ]
+            }
+        },
+        "/api/v1/dispositivos": {
+            "get": {
+                "tags": [
+                    "Dispositivos"
+                ],
+                "summary": "index",
+                "description": "Permiso requerido: dispositivos.ver.",
+                "operationId": "5fd867e72410f810b4b02709200d76d8",
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    },
+                    "401": {
+                        "description": "No autenticado"
+                    },
+                    "403": {
+                        "description": "Sin permiso"
+                    },
+                    "404": {
+                        "description": "No encontrado"
+                    },
+                    "422": {
+                        "description": "Datos inválidos"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctumBearer": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "Dispositivos"
+                ],
+                "summary": "store",
+                "description": "Permiso requerido: dispositivos.crear.",
+                "operationId": "8401a9d6f4041c40ce4f0324727a748b",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    },
+                    "401": {
+                        "description": "No autenticado"
+                    },
+                    "403": {
+                        "description": "Sin permiso"
+                    },
+                    "404": {
+                        "description": "No encontrado"
+                    },
+                    "422": {
+                        "description": "Datos inválidos"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctumBearer": []
+                    }
+                ]
+            }
+        },
+        "/api/v1/dispositivos/{dispositivo}": {
+            "get": {
+                "tags": [
+                    "Dispositivos"
+                ],
+                "summary": "show",
+                "description": "Permiso requerido: dispositivos.ver.",
+                "operationId": "43268e5fb8b1de09785e46cc7a759e8a",
+                "parameters": [
+                    {
+                        "name": "dispositivo",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    },
+                    "401": {
+                        "description": "No autenticado"
+                    },
+                    "403": {
+                        "description": "Sin permiso"
+                    },
+                    "404": {
+                        "description": "No encontrado"
+                    },
+                    "422": {
+                        "description": "Datos inválidos"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctumBearer": []
+                    }
+                ]
+            },
+            "put": {
+                "tags": [
+                    "Dispositivos"
+                ],
+                "summary": "updatePut",
+                "description": "Permiso requerido: dispositivos.editar.",
+                "operationId": "db14fbe449d14a1a681b7a2901978574",
+                "parameters": [
+                    {
+                        "name": "dispositivo",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    },
+                    "401": {
+                        "description": "No autenticado"
+                    },
+                    "403": {
+                        "description": "Sin permiso"
+                    },
+                    "404": {
+                        "description": "No encontrado"
+                    },
+                    "422": {
+                        "description": "Datos inválidos"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctumBearer": []
+                    }
+                ]
+            },
+            "patch": {
+                "tags": [
+                    "Dispositivos"
+                ],
+                "summary": "updatePatch",
+                "description": "Permiso requerido: dispositivos.editar.",
+                "operationId": "2c63784edffbcf3730137ff1018c1142",
+                "parameters": [
+                    {
+                        "name": "dispositivo",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    },
+                    "401": {
+                        "description": "No autenticado"
+                    },
+                    "403": {
+                        "description": "Sin permiso"
+                    },
+                    "404": {
+                        "description": "No encontrado"
+                    },
+                    "422": {
+                        "description": "Datos inválidos"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctumBearer": []
+                    }
+                ]
+            }
+        },
+        "/api/v1/dispositivos/{dispositivo}/cambiar-estatus": {
+            "patch": {
+                "tags": [
+                    "Dispositivos"
+                ],
+                "summary": "cambiarEstatus",
+                "description": "Permiso requerido: dispositivos.editar.",
+                "operationId": "a4f34479a190058b034f35837189a959",
+                "parameters": [
+                    {
+                        "name": "dispositivo",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    },
+                    "401": {
+                        "description": "No autenticado"
+                    },
+                    "403": {
+                        "description": "Sin permiso"
+                    },
+                    "404": {
+                        "description": "No encontrado"
+                    },
+                    "422": {
+                        "description": "Datos inválidos"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctumBearer": []
+                    }
+                ]
+            }
+        },
+        "/api/v1/dispositivos/{dispositivo}/desactivar": {
+            "patch": {
+                "tags": [
+                    "Dispositivos"
+                ],
+                "summary": "desactivar",
+                "description": "Permiso requerido: dispositivos.desactivar.",
+                "operationId": "abde276ffe37b1a844f51865f8fad47d",
+                "parameters": [
+                    {
+                        "name": "dispositivo",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    },
+                    "401": {
+                        "description": "No autenticado"
+                    },
+                    "403": {
+                        "description": "Sin permiso"
+                    },
+                    "404": {
+                        "description": "No encontrado"
+                    },
+                    "422": {
+                        "description": "Datos inválidos"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctumBearer": []
+                    }
+                ]
+            }
+        },
+        "/api/v1/dispositivos/{dispositivo}/reactivar": {
+            "patch": {
+                "tags": [
+                    "Dispositivos"
+                ],
+                "summary": "reactivar",
+                "description": "Permiso requerido: dispositivos.editar.",
+                "operationId": "d87cd755cbc932adb785b8fe7aba45a6",
+                "parameters": [
+                    {
+                        "name": "dispositivo",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    },
+                    "401": {
+                        "description": "No autenticado"
+                    },
+                    "403": {
+                        "description": "Sin permiso"
+                    },
+                    "404": {
+                        "description": "No encontrado"
+                    },
+                    "422": {
+                        "description": "Datos inválidos"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctumBearer": []
+                    }
+                ]
+            }
+        },
+        "/api/v1/membresias": {
+            "get": {
+                "tags": [
+                    "Membresías"
+                ],
+                "summary": "index",
+                "description": "Permiso requerido: membresias.ver.",
+                "operationId": "de26cc922948d6d7508514bf0461139a",
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    },
+                    "401": {
+                        "description": "No autenticado"
+                    },
+                    "403": {
+                        "description": "Sin permiso"
+                    },
+                    "404": {
+                        "description": "No encontrado"
+                    },
+                    "422": {
+                        "description": "Datos inválidos"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctumBearer": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "Membresías"
+                ],
+                "summary": "store",
+                "description": "Permiso requerido: membresias.crear.",
+                "operationId": "b00a4296e29c19c2f5cd7d7072d518ed",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    },
+                    "401": {
+                        "description": "No autenticado"
+                    },
+                    "403": {
+                        "description": "Sin permiso"
+                    },
+                    "404": {
+                        "description": "No encontrado"
+                    },
+                    "422": {
+                        "description": "Datos inválidos"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctumBearer": []
+                    }
+                ]
+            }
+        },
+        "/api/v1/membresias/{membresia}": {
+            "get": {
+                "tags": [
+                    "Membresías"
+                ],
+                "summary": "show",
+                "description": "Permiso requerido: membresias.ver.",
+                "operationId": "115e499cb31f8cf33f917a38ad6a661d",
+                "parameters": [
+                    {
+                        "name": "membresia",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    },
+                    "401": {
+                        "description": "No autenticado"
+                    },
+                    "403": {
+                        "description": "Sin permiso"
+                    },
+                    "404": {
+                        "description": "No encontrado"
+                    },
+                    "422": {
+                        "description": "Datos inválidos"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctumBearer": []
+                    }
+                ]
+            },
+            "put": {
+                "tags": [
+                    "Membresías"
+                ],
+                "summary": "updatePut",
+                "description": "Permiso requerido: membresias.editar.",
+                "operationId": "660693f71fe789feeffb1ea0d92bbe8a",
+                "parameters": [
+                    {
+                        "name": "membresia",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    },
+                    "401": {
+                        "description": "No autenticado"
+                    },
+                    "403": {
+                        "description": "Sin permiso"
+                    },
+                    "404": {
+                        "description": "No encontrado"
+                    },
+                    "422": {
+                        "description": "Datos inválidos"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctumBearer": []
+                    }
+                ]
+            },
+            "patch": {
+                "tags": [
+                    "Membresías"
+                ],
+                "summary": "updatePatch",
+                "description": "Permiso requerido: membresias.editar.",
+                "operationId": "a0773a0f554cb9444df29941c02326e6",
+                "parameters": [
+                    {
+                        "name": "membresia",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    },
+                    "401": {
+                        "description": "No autenticado"
+                    },
+                    "403": {
+                        "description": "Sin permiso"
+                    },
+                    "404": {
+                        "description": "No encontrado"
+                    },
+                    "422": {
+                        "description": "Datos inválidos"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctumBearer": []
+                    }
+                ]
+            }
+        },
+        "/api/v1/membresias/{membresia}/cancelar": {
+            "patch": {
+                "tags": [
+                    "Membresías"
+                ],
+                "summary": "cancelar",
+                "description": "Permiso requerido: membresias.cancelar.",
+                "operationId": "7baa6429c1deea07605494b8af55b9b1",
+                "parameters": [
+                    {
+                        "name": "membresia",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    },
+                    "401": {
+                        "description": "No autenticado"
+                    },
+                    "403": {
+                        "description": "Sin permiso"
+                    },
+                    "404": {
+                        "description": "No encontrado"
+                    },
+                    "422": {
+                        "description": "Datos inválidos"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctumBearer": []
+                    }
+                ]
+            }
+        },
+        "/api/v1/membresias/{membresia}/reactivar": {
+            "patch": {
+                "tags": [
+                    "Membresías"
+                ],
+                "summary": "reactivar",
+                "description": "Permiso requerido: membresias.editar.",
+                "operationId": "ffcb19cbc5f1cf8221b8f2a1a1288e8a",
+                "parameters": [
+                    {
+                        "name": "membresia",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    },
+                    "401": {
+                        "description": "No autenticado"
+                    },
+                    "403": {
+                        "description": "Sin permiso"
+                    },
+                    "404": {
+                        "description": "No encontrado"
+                    },
+                    "422": {
+                        "description": "Datos inválidos"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctumBearer": []
+                    }
+                ]
+            }
+        },
+        "/api/v1/membresias/{membresia}/renovar": {
+            "patch": {
+                "tags": [
+                    "Membresías"
+                ],
+                "summary": "renovar",
+                "description": "Permiso requerido: membresias.renovar.",
+                "operationId": "7dfa5e2dc85d36d133da2e221737980e",
+                "parameters": [
+                    {
+                        "name": "membresia",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    },
+                    "401": {
+                        "description": "No autenticado"
+                    },
+                    "403": {
+                        "description": "Sin permiso"
+                    },
+                    "404": {
+                        "description": "No encontrado"
+                    },
+                    "422": {
+                        "description": "Datos inválidos"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctumBearer": []
+                    }
+                ]
+            }
+        },
+        "/api/v1/membresias/{membresia}/suspender": {
+            "patch": {
+                "tags": [
+                    "Membresías"
+                ],
+                "summary": "suspender",
+                "description": "Permiso requerido: membresias.suspender.",
+                "operationId": "5e7efe7b3974548c0cff264bb97bab19",
+                "parameters": [
+                    {
+                        "name": "membresia",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    },
+                    "401": {
+                        "description": "No autenticado"
+                    },
+                    "403": {
+                        "description": "Sin permiso"
+                    },
+                    "404": {
+                        "description": "No encontrado"
+                    },
+                    "422": {
+                        "description": "Datos inválidos"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctumBearer": []
+                    }
+                ]
+            }
+        },
+        "/api/v1/metodos-pago": {
+            "get": {
+                "tags": [
+                    "Métodos de Pago"
+                ],
+                "summary": "index",
+                "description": "Permiso requerido: metodos_pago.ver.",
+                "operationId": "4af75e2db029f815dae4abe9d09680f8",
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    },
+                    "401": {
+                        "description": "No autenticado"
+                    },
+                    "403": {
+                        "description": "Sin permiso"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctumBearer": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "Métodos de Pago"
+                ],
+                "summary": "store",
+                "description": "Permiso requerido: metodos_pago.crear.",
+                "operationId": "b6db3caba9235f3b4da12977996ebbf5",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    },
+                    "401": {
+                        "description": "No autenticado"
+                    },
+                    "403": {
+                        "description": "Sin permiso"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctumBearer": []
+                    }
+                ]
+            }
+        },
+        "/api/v1/metodos-pago/{metodoPago}": {
+            "get": {
+                "tags": [
+                    "Métodos de Pago"
+                ],
+                "summary": "show",
+                "description": "Permiso requerido: metodos_pago.ver.",
+                "operationId": "b5038b4c06b1a880d2a4237c313da41f",
+                "parameters": [
+                    {
+                        "name": "metodoPago",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    },
+                    "401": {
+                        "description": "No autenticado"
+                    },
+                    "403": {
+                        "description": "Sin permiso"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctumBearer": []
+                    }
+                ]
+            },
+            "put": {
+                "tags": [
+                    "Métodos de Pago"
+                ],
+                "summary": "updatePut",
+                "description": "Permiso requerido: metodos_pago.editar.",
+                "operationId": "31e2aa0c4614a684755e15eaf8f80d82",
+                "parameters": [
+                    {
+                        "name": "metodoPago",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    },
+                    "401": {
+                        "description": "No autenticado"
+                    },
+                    "403": {
+                        "description": "Sin permiso"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctumBearer": []
+                    }
+                ]
+            },
+            "patch": {
+                "tags": [
+                    "Métodos de Pago"
+                ],
+                "summary": "updatePatch",
+                "description": "Permiso requerido: metodos_pago.editar.",
+                "operationId": "a7233a03f8f8f6cf5875ffb7358eca69",
+                "parameters": [
+                    {
+                        "name": "metodoPago",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    },
+                    "401": {
+                        "description": "No autenticado"
+                    },
+                    "403": {
+                        "description": "Sin permiso"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctumBearer": []
+                    }
+                ]
+            }
+        },
+        "/api/v1/metodos-pago/{metodoPago}/desactivar": {
+            "patch": {
+                "tags": [
+                    "Métodos de Pago"
+                ],
+                "summary": "desactivar",
+                "description": "Permiso requerido: metodos_pago.desactivar.",
+                "operationId": "91a29be776a8a12947e762baf7dcbe1b",
+                "parameters": [
+                    {
+                        "name": "metodoPago",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    },
+                    "401": {
+                        "description": "No autenticado"
+                    },
+                    "403": {
+                        "description": "Sin permiso"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctumBearer": []
+                    }
+                ]
+            }
+        },
+        "/api/v1/metodos-pago/{metodoPago}/reactivar": {
+            "patch": {
+                "tags": [
+                    "Métodos de Pago"
+                ],
+                "summary": "reactivar",
+                "description": "Permiso requerido: metodos_pago.editar.",
+                "operationId": "01895f5cd9c9de18fdf70abc4181cbaa",
+                "parameters": [
+                    {
+                        "name": "metodoPago",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    },
+                    "401": {
+                        "description": "No autenticado"
+                    },
+                    "403": {
+                        "description": "Sin permiso"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctumBearer": []
+                    }
+                ]
+            }
+        },
+        "/api/v1/pagos": {
+            "get": {
+                "tags": [
+                    "Pagos"
+                ],
+                "summary": "index",
+                "description": "Permiso requerido: pagos.ver.",
+                "operationId": "2287ba06c411da54a7f5d6c81c7ca82a",
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    },
+                    "401": {
+                        "description": "No autenticado"
+                    },
+                    "403": {
+                        "description": "Sin permiso"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctumBearer": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "Pagos"
+                ],
+                "summary": "store",
+                "description": "Permiso requerido: pagos.registrar.",
+                "operationId": "e15db4787b7ef9ef62908eb7dd7117db",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    },
+                    "401": {
+                        "description": "No autenticado"
+                    },
+                    "403": {
+                        "description": "Sin permiso"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctumBearer": []
+                    }
+                ]
+            }
+        },
+        "/api/v1/pagos/{pago}": {
+            "get": {
+                "tags": [
+                    "Pagos"
+                ],
+                "summary": "show",
+                "description": "Permiso requerido: pagos.ver.",
+                "operationId": "5e6955db14dcc4c0bb35be89f5d139d5",
+                "parameters": [
+                    {
+                        "name": "pago",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    },
+                    "401": {
+                        "description": "No autenticado"
+                    },
+                    "403": {
+                        "description": "Sin permiso"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctumBearer": []
+                    }
+                ]
+            }
+        },
+        "/api/v1/pagos/{pago}/cancelar": {
+            "patch": {
+                "tags": [
+                    "Pagos"
+                ],
+                "summary": "cancelar",
+                "description": "Permiso requerido: pagos.cancelar.",
+                "operationId": "e6753915468291126fc7cb9f1b18e8ed",
+                "parameters": [
+                    {
+                        "name": "pago",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    },
+                    "401": {
+                        "description": "No autenticado"
+                    },
+                    "403": {
+                        "description": "Sin permiso"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctumBearer": []
+                    }
+                ]
+            }
+        },
+        "/api/v1/planes": {
+            "get": {
+                "tags": [
+                    "Planes"
+                ],
+                "summary": "index",
+                "description": "Permiso requerido: planes.ver.",
+                "operationId": "72fc18dc77f630db8a4401564979eeb4",
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    },
+                    "401": {
+                        "description": "No autenticado"
+                    },
+                    "403": {
+                        "description": "Sin permiso"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctumBearer": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "Planes"
+                ],
+                "summary": "store",
+                "description": "Permiso requerido: planes.crear.",
+                "operationId": "3d22153c3e759012fff9337a772e0fa7",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    },
+                    "401": {
+                        "description": "No autenticado"
+                    },
+                    "403": {
+                        "description": "Sin permiso"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctumBearer": []
+                    }
+                ]
+            }
+        },
+        "/api/v1/planes/{plan}": {
+            "get": {
+                "tags": [
+                    "Planes"
+                ],
+                "summary": "show",
+                "description": "Permiso requerido: planes.ver.",
+                "operationId": "86ca4fc3addec6802a71bc2ae819acf1",
+                "parameters": [
+                    {
+                        "name": "plan",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    },
+                    "401": {
+                        "description": "No autenticado"
+                    },
+                    "403": {
+                        "description": "Sin permiso"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctumBearer": []
+                    }
+                ]
+            },
+            "put": {
+                "tags": [
+                    "Planes"
+                ],
+                "summary": "updatePut",
+                "description": "Permiso requerido: planes.editar.",
+                "operationId": "9c6c13ba85c93839924249ed70e7613d",
+                "parameters": [
+                    {
+                        "name": "plan",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    },
+                    "401": {
+                        "description": "No autenticado"
+                    },
+                    "403": {
+                        "description": "Sin permiso"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctumBearer": []
+                    }
+                ]
+            },
+            "patch": {
+                "tags": [
+                    "Planes"
+                ],
+                "summary": "updatePatch",
+                "description": "Permiso requerido: planes.editar.",
+                "operationId": "745d23b826af56c083c56f728b7502a8",
+                "parameters": [
+                    {
+                        "name": "plan",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    },
+                    "401": {
+                        "description": "No autenticado"
+                    },
+                    "403": {
+                        "description": "Sin permiso"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctumBearer": []
+                    }
+                ]
+            }
+        },
+        "/api/v1/planes/{plan}/desactivar": {
+            "patch": {
+                "tags": [
+                    "Planes"
+                ],
+                "summary": "desactivar",
+                "description": "Permiso requerido: planes.desactivar.",
+                "operationId": "6772f2ede38ded8007b40f2b3a38e481",
+                "parameters": [
+                    {
+                        "name": "plan",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    },
+                    "401": {
+                        "description": "No autenticado"
+                    },
+                    "403": {
+                        "description": "Sin permiso"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctumBearer": []
+                    }
+                ]
+            }
+        },
+        "/api/v1/planes/{plan}/reactivar": {
+            "patch": {
+                "tags": [
+                    "Planes"
+                ],
+                "summary": "reactivar",
+                "description": "Permiso requerido: planes.editar.",
+                "operationId": "9c3575f9351f0efb2a20d0ace2a36bab",
+                "parameters": [
+                    {
+                        "name": "plan",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    },
+                    "401": {
+                        "description": "No autenticado"
+                    },
+                    "403": {
+                        "description": "Sin permiso"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctumBearer": []
+                    }
+                ]
+            }
+        },
+        "/api/v1/rbac/check-admin": {
+            "get": {
+                "tags": [
+                    "RBAC"
+                ],
+                "summary": "Verificar admin",
+                "description": "Permiso requerido: roles.asignar_permisos.",
+                "operationId": "153a64699b1ce6e973e9640353372748",
+                "responses": {
+                    "200": {
+                        "description": "Autorizado correctamente"
+                    },
+                    "401": {
+                        "description": "No autenticado"
+                    },
+                    "403": {
+                        "description": "Sin permiso"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctumBearer": []
+                    }
+                ]
+            }
+        },
+        "/api/v1/recepcion/clientes/buscar": {
+            "get": {
+                "tags": [
+                    "Recepción"
+                ],
+                "summary": "buscarClientes",
+                "description": "Permiso requerido: clientes.ver.",
+                "operationId": "79ca5ed5f1ae895070b82bd52b13b16b",
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    },
+                    "401": {
+                        "description": "No autenticado"
+                    },
+                    "403": {
+                        "description": "Sin permiso"
+                    },
+                    "404": {
+                        "description": "No encontrado"
+                    },
+                    "422": {
+                        "description": "Datos inválidos"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctumBearer": []
+                    }
+                ]
+            }
+        },
+        "/api/v1/recepcion/clientes/{cliente}/resumen": {
+            "get": {
+                "tags": [
+                    "Recepción"
+                ],
+                "summary": "resumenCliente",
+                "description": "Permiso requerido: clientes.ver.",
+                "operationId": "7a1c59cc71b23326c8b83a76caccff52",
+                "parameters": [
+                    {
+                        "name": "cliente",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    },
+                    "401": {
+                        "description": "No autenticado"
+                    },
+                    "403": {
+                        "description": "Sin permiso"
+                    },
+                    "404": {
+                        "description": "No encontrado"
+                    },
+                    "422": {
+                        "description": "Datos inválidos"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctumBearer": []
+                    }
+                ]
+            }
+        },
+        "/api/v1/reportes/dashboard": {
+            "get": {
+                "tags": [
+                    "Reportes"
+                ],
+                "summary": "dashboard",
+                "description": "Permiso requerido: reportes.ver.",
+                "operationId": "cd2931e4ee17f762daf63d5036bce291",
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    },
+                    "401": {
+                        "description": "No autenticado"
+                    },
+                    "403": {
+                        "description": "Sin permiso"
+                    },
+                    "404": {
+                        "description": "No encontrado"
+                    },
+                    "422": {
+                        "description": "Datos inválidos"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctumBearer": []
+                    }
+                ]
+            }
+        },
+        "/api/v1/reportes/ingresos": {
+            "get": {
+                "tags": [
+                    "Reportes"
+                ],
+                "summary": "ingresos",
+                "description": "Permiso requerido: reportes.ver.",
+                "operationId": "c4898174dc463964eeb5d6f16815ca3b",
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    },
+                    "401": {
+                        "description": "No autenticado"
+                    },
+                    "403": {
+                        "description": "Sin permiso"
+                    },
+                    "404": {
+                        "description": "No encontrado"
+                    },
+                    "422": {
+                        "description": "Datos inválidos"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctumBearer": []
+                    }
+                ]
+            }
+        },
+        "/api/v1/reportes/ingresos/exportar": {
+            "get": {
+                "tags": [
+                    "Reportes"
+                ],
+                "summary": "exportarIngresos",
+                "description": "Permiso requerido: reportes.exportar.",
+                "operationId": "1adf0a42d6d6a8a7681f3b0adcd36251",
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    },
+                    "401": {
+                        "description": "No autenticado"
+                    },
+                    "403": {
+                        "description": "Sin permiso"
+                    },
+                    "404": {
+                        "description": "No encontrado"
+                    },
+                    "422": {
+                        "description": "Datos inválidos"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctumBearer": []
+                    }
+                ]
+            }
+        },
+        "/api/v1/reportes/accesos": {
+            "get": {
+                "tags": [
+                    "Reportes"
+                ],
+                "summary": "accesos",
+                "description": "Permiso requerido: reportes.ver.",
+                "operationId": "e26f0532a6b0680650042bf97a3ee232",
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    },
+                    "401": {
+                        "description": "No autenticado"
+                    },
+                    "403": {
+                        "description": "Sin permiso"
+                    },
+                    "404": {
+                        "description": "No encontrado"
+                    },
+                    "422": {
+                        "description": "Datos inválidos"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctumBearer": []
+                    }
+                ]
+            }
+        },
+        "/api/v1/reportes/accesos/exportar": {
+            "get": {
+                "tags": [
+                    "Reportes"
+                ],
+                "summary": "exportarAccesos",
+                "description": "Permiso requerido: reportes.exportar.",
+                "operationId": "ae88972c3e15f8169239ef170ef65d5f",
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    },
+                    "401": {
+                        "description": "No autenticado"
+                    },
+                    "403": {
+                        "description": "Sin permiso"
+                    },
+                    "404": {
+                        "description": "No encontrado"
+                    },
+                    "422": {
+                        "description": "Datos inválidos"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctumBearer": []
+                    }
+                ]
+            }
+        },
+        "/api/v1/reportes/clientes": {
+            "get": {
+                "tags": [
+                    "Reportes"
+                ],
+                "summary": "clientes",
+                "description": "Permiso requerido: reportes.ver.",
+                "operationId": "fcaa3ebf1b67513f8b704115ffacad4f",
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    },
+                    "401": {
+                        "description": "No autenticado"
+                    },
+                    "403": {
+                        "description": "Sin permiso"
+                    },
+                    "404": {
+                        "description": "No encontrado"
+                    },
+                    "422": {
+                        "description": "Datos inválidos"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctumBearer": []
+                    }
+                ]
+            }
+        },
+        "/api/v1/reportes/clientes-vencidos": {
+            "get": {
+                "tags": [
+                    "Reportes"
+                ],
+                "summary": "clientesVencidos",
+                "description": "Permiso requerido: reportes.ver.",
+                "operationId": "558afeb0b3e623ba59a3528204878838",
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    },
+                    "401": {
+                        "description": "No autenticado"
+                    },
+                    "403": {
+                        "description": "Sin permiso"
+                    },
+                    "404": {
+                        "description": "No encontrado"
+                    },
+                    "422": {
+                        "description": "Datos inválidos"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctumBearer": []
+                    }
+                ]
+            }
+        },
+        "/api/v1/reportes/clientes-vencidos/exportar": {
+            "get": {
+                "tags": [
+                    "Reportes"
+                ],
+                "summary": "exportarClientesVencidos",
+                "description": "Permiso requerido: reportes.exportar.",
+                "operationId": "66896bdd304fe4e520c901ec572ea9c7",
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    },
+                    "401": {
+                        "description": "No autenticado"
+                    },
+                    "403": {
+                        "description": "Sin permiso"
+                    },
+                    "404": {
+                        "description": "No encontrado"
+                    },
+                    "422": {
+                        "description": "Datos inválidos"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctumBearer": []
+                    }
+                ]
+            }
+        },
+        "/api/v1/reportes/membresias-por-vencer": {
+            "get": {
+                "tags": [
+                    "Reportes"
+                ],
+                "summary": "membresiasPorVencer",
+                "description": "Permiso requerido: reportes.ver.",
+                "operationId": "7bad914cdb68115561f27d93241b7b11",
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    },
+                    "401": {
+                        "description": "No autenticado"
+                    },
+                    "403": {
+                        "description": "Sin permiso"
+                    },
+                    "404": {
+                        "description": "No encontrado"
+                    },
+                    "422": {
+                        "description": "Datos inválidos"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctumBearer": []
+                    }
+                ]
+            }
+        },
+        "/api/v1/reportes/membresias-por-vencer/exportar": {
+            "get": {
+                "tags": [
+                    "Reportes"
+                ],
+                "summary": "exportarMembresiasPorVencer",
+                "description": "Permiso requerido: reportes.exportar.",
+                "operationId": "32a3c2a71d1a1f9c6a40ada3fd47eecf",
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    },
+                    "401": {
+                        "description": "No autenticado"
+                    },
+                    "403": {
+                        "description": "Sin permiso"
+                    },
+                    "404": {
+                        "description": "No encontrado"
+                    },
+                    "422": {
+                        "description": "Datos inválidos"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctumBearer": []
+                    }
+                ]
+            }
+        },
+        "/api/v1/sucursales": {
+            "get": {
+                "tags": [
+                    "Sucursales"
+                ],
+                "summary": "Listar sucursales",
+                "description": "Permiso requerido: sucursales.ver.",
+                "operationId": "b97b9d896f6239cf809d93c4356fb6cc",
+                "responses": {
+                    "200": {
+                        "description": "Sucursales obtenidas"
+                    },
+                    "401": {
+                        "description": "No autenticado"
+                    },
+                    "403": {
+                        "description": "Sin permiso"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctumBearer": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "Sucursales"
+                ],
+                "summary": "Crear sucursal",
+                "description": "Permiso requerido: sucursales.crear.",
+                "operationId": "5358828ba0be895eb5c0c3417350fd66",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Sucursal creada"
+                    },
+                    "401": {
+                        "description": "No autenticado"
+                    },
+                    "403": {
+                        "description": "Sin permiso"
+                    },
+                    "422": {
+                        "description": "Datos inválidos"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctumBearer": []
+                    }
+                ]
+            }
+        },
+        "/api/v1/sucursales/{sucursal}": {
+            "get": {
+                "tags": [
+                    "Sucursales"
+                ],
+                "summary": "Ver sucursal",
+                "description": "Permiso requerido: sucursales.ver.",
+                "operationId": "db609117d62c0abb4837aac974be4622",
+                "parameters": [
+                    {
+                        "name": "sucursal",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Sucursal obtenida"
+                    },
+                    "404": {
+                        "description": "No encontrada"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctumBearer": []
+                    }
+                ]
+            },
+            "put": {
+                "tags": [
+                    "Sucursales"
+                ],
+                "summary": "Actualizar sucursal (PUT)",
+                "description": "Permiso requerido: sucursales.editar.",
+                "operationId": "0328cf7cfcfda79a9a697f0cd357d756",
+                "parameters": [
+                    {
+                        "name": "sucursal",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Sucursal actualizada"
+                    },
+                    "422": {
+                        "description": "Datos inválidos"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctumBearer": []
+                    }
+                ]
+            },
+            "patch": {
+                "tags": [
+                    "Sucursales"
+                ],
+                "summary": "Actualizar sucursal (PATCH)",
+                "description": "Permiso requerido: sucursales.editar.",
+                "operationId": "6ac4e91e02724363a4d2d52089e7e41a",
+                "parameters": [
+                    {
+                        "name": "sucursal",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Sucursal actualizada"
+                    },
+                    "422": {
+                        "description": "Datos inválidos"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctumBearer": []
+                    }
+                ]
+            }
+        },
+        "/api/v1/sucursales/{sucursal}/desactivar": {
+            "patch": {
+                "tags": [
+                    "Sucursales"
+                ],
+                "summary": "Desactivar sucursal",
+                "description": "Permiso requerido: sucursales.desactivar.",
+                "operationId": "38609ac36c0d30c409c6301356cb71a6",
+                "parameters": [
+                    {
+                        "name": "sucursal",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Sucursal desactivada"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctumBearer": []
+                    }
+                ]
+            }
+        },
+        "/api/v1/sucursales/{sucursal}/reactivar": {
+            "patch": {
+                "tags": [
+                    "Sucursales"
+                ],
+                "summary": "Reactivar sucursal",
+                "description": "Permiso requerido: sucursales.editar.",
+                "operationId": "78571579993788727a0948c5b340864c",
+                "parameters": [
+                    {
+                        "name": "sucursal",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Sucursal reactivada"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctumBearer": []
+                    }
+                ]
             }
         }
     },
@@ -99,6 +3194,48 @@
     "tags": [
         {
             "name": "Auth"
+        },
+        {
+            "name": "RBAC"
+        },
+        {
+            "name": "Sucursales"
+        },
+        {
+            "name": "Planes"
+        },
+        {
+            "name": "Métodos de Pago"
+        },
+        {
+            "name": "Clientes"
+        },
+        {
+            "name": "Membresías"
+        },
+        {
+            "name": "Pagos"
+        },
+        {
+            "name": "Accesos"
+        },
+        {
+            "name": "Dispositivos"
+        },
+        {
+            "name": "Biométricos"
+        },
+        {
+            "name": "Auditoría"
+        },
+        {
+            "name": "Recepción"
+        },
+        {
+            "name": "Reportes"
+        },
+        {
+            "name": "Cortes de Caja"
         }
     ]
 }

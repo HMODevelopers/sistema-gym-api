@@ -1,0 +1,9 @@
+<?php
+namespace App\OpenApi\Paths;
+use OpenApi\Attributes as OA;
+class PagoPaths {
+#[OA\Get(path:'/api/v1/pagos',summary:'index',description:'Permiso requerido: pagos.ver.',security:[['sanctumBearer'=>[]]],tags:['Pagos'],responses:[new OA\Response(response:200,description:'OK'),new OA\Response(response:401,description:'No autenticado'),new OA\Response(response:403,description:'Sin permiso')])] public function index():void{}
+#[OA\Post(path:'/api/v1/pagos',summary:'store',description:'Permiso requerido: pagos.registrar.',security:[['sanctumBearer'=>[]]],tags:['Pagos'], requestBody:new OA\RequestBody(required:true,content:new OA\JsonContent(type:'object')),responses:[new OA\Response(response:200,description:'OK'),new OA\Response(response:401,description:'No autenticado'),new OA\Response(response:403,description:'Sin permiso')])] public function store():void{}
+#[OA\Get(path:'/api/v1/pagos/{pago}',summary:'show',description:'Permiso requerido: pagos.ver.',security:[['sanctumBearer'=>[]]],tags:['Pagos'], parameters:[new OA\Parameter(name:'pago',in:'path',required:true,schema:new OA\Schema(type:'integer'))],responses:[new OA\Response(response:200,description:'OK'),new OA\Response(response:401,description:'No autenticado'),new OA\Response(response:403,description:'Sin permiso')])] public function show():void{}
+#[OA\Patch(path:'/api/v1/pagos/{pago}/cancelar',summary:'cancelar',description:'Permiso requerido: pagos.cancelar.',security:[['sanctumBearer'=>[]]],tags:['Pagos'], parameters:[new OA\Parameter(name:'pago',in:'path',required:true,schema:new OA\Schema(type:'integer'))],responses:[new OA\Response(response:200,description:'OK'),new OA\Response(response:401,description:'No autenticado'),new OA\Response(response:403,description:'Sin permiso')])] public function cancelar():void{}
+}
