@@ -13,6 +13,23 @@ use OpenApi\Attributes as OA;
     url: 'http://127.0.0.1:8000',
     description: 'Servidor local'
 )]
+
+#[OA\Tag(name: 'Auth')]
+#[OA\Tag(name: 'RBAC')]
+#[OA\Tag(name: 'Sucursales')]
+#[OA\Tag(name: 'Planes')]
+#[OA\Tag(name: 'Métodos de Pago')]
+#[OA\Tag(name: 'Clientes')]
+#[OA\Tag(name: 'Membresías')]
+#[OA\Tag(name: 'Pagos')]
+#[OA\Tag(name: 'Accesos')]
+#[OA\Tag(name: 'Dispositivos')]
+#[OA\Tag(name: 'Biométricos')]
+#[OA\Tag(name: 'Auditoría')]
+#[OA\Tag(name: 'Recepción')]
+#[OA\Tag(name: 'Reportes')]
+#[OA\Tag(name: 'Cortes de Caja')]
+#[OA\Tag(name: 'Exportaciones')]
 #[OA\SecurityScheme(
     securityScheme: 'sanctumBearer',
     type: 'http',

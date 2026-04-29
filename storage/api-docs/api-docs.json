@@ -98,8 +98,7 @@
     },
     "tags": [
         {
-            "name": "Auth",
-            "description": "Auth"
+            "name": "Auth"
         }
     ]
 }
