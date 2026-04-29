@@ -103,6 +103,7 @@ Route::prefix('v1')->group(function (): void {
         Route::get('/', [CorteCajaController::class, 'index'])->middleware('permission:pagos.ver');
         Route::post('calcular', [CorteCajaController::class, 'calcular'])->middleware('permission:pagos.ver');
         Route::post('/', [CorteCajaController::class, 'store'])->middleware('permission:pagos.registrar');
+        Route::get('{corte}/exportar', [CorteCajaController::class, 'exportar'])->middleware('permission:reportes.exportar');
         Route::get('{corte}', [CorteCajaController::class, 'show'])->middleware('permission:pagos.ver');
         Route::patch('{corte}/cancelar', [CorteCajaController::class, 'cancelar'])->middleware('permission:pagos.cancelar');
     });
@@ -141,6 +142,10 @@ Route::prefix('v1')->group(function (): void {
 
 
     Route::prefix('reportes')->middleware('auth:sanctum')->group(function (): void {
+        Route::get('ingresos/exportar', [ReporteController::class, 'exportarIngresos'])->middleware('permission:reportes.exportar');
+        Route::get('accesos/exportar', [ReporteController::class, 'exportarAccesos'])->middleware('permission:reportes.exportar');
+        Route::get('membresias-por-vencer/exportar', [ReporteController::class, 'exportarMembresiasPorVencer'])->middleware('permission:reportes.exportar');
+        Route::get('clientes-vencidos/exportar', [ReporteController::class, 'exportarClientesVencidos'])->middleware('permission:reportes.exportar');
         Route::get('dashboard', [ReporteController::class, 'dashboard'])->middleware('permission:reportes.ver');
         Route::get('ingresos', [ReporteController::class, 'ingresos'])->middleware('permission:reportes.ver');
         Route::get('membresias-por-vencer', [ReporteController::class, 'membresiasPorVencer'])->middleware('permission:reportes.ver');

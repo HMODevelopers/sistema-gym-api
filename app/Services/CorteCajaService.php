@@ -113,4 +113,19 @@ class CorteCajaService
             return $corte->fresh();
         });
     }
+
+    public function obtenerDatosExportacion(CorteCaja $corte): array
+    {
+        $corte->load(['sucursal:id,nombre,clave', 'usuario:id,nombre,apellido_paterno,apellido_materno,username']);
+        $detalle = $corte->detalle_metodos_pago;
+        if (empty($detalle) || ! is_array($detalle)) {
+            $detalle = $this->calcular([
+                'sucursal_id' => $corte->sucursal_id,
+                'usuario_id' => $corte->usuario_id,
+                'fecha_desde' => $corte->fecha_desde,
+                'fecha_hasta' => $corte->fecha_hasta,
+            ])['metodos_pago'];
+        }
+        return ['corte' => $corte, 'detalle_metodos_pago' => $detalle];
+    }
 }
