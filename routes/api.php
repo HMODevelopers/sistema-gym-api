@@ -11,6 +11,7 @@ use App\Http\Controllers\Api\V1\MetodoPagoController;
 use App\Http\Controllers\Api\V1\PagoController;
 use App\Http\Controllers\Api\V1\PlanController;
 use App\Http\Controllers\Api\V1\RecepcionController;
+use App\Http\Controllers\Api\V1\ReporteController;
 use App\Http\Controllers\Api\V1\SucursalController;
 use Illuminate\Support\Facades\Route;
 
@@ -126,6 +127,16 @@ Route::prefix('v1')->group(function (): void {
     Route::prefix('recepcion')->middleware('auth:sanctum')->group(function (): void {
         Route::get('clientes/buscar', [RecepcionController::class, 'buscarClientes'])->middleware('permission:clientes.ver');
         Route::get('clientes/{cliente}/resumen', [RecepcionController::class, 'resumenCliente'])->middleware('permission:clientes.ver');
+    });
+
+
+    Route::prefix('reportes')->middleware('auth:sanctum')->group(function (): void {
+        Route::get('dashboard', [ReporteController::class, 'dashboard'])->middleware('permission:reportes.ver');
+        Route::get('ingresos', [ReporteController::class, 'ingresos'])->middleware('permission:reportes.ver');
+        Route::get('membresias-por-vencer', [ReporteController::class, 'membresiasPorVencer'])->middleware('permission:reportes.ver');
+        Route::get('clientes-vencidos', [ReporteController::class, 'clientesVencidos'])->middleware('permission:reportes.ver');
+        Route::get('accesos', [ReporteController::class, 'accesos'])->middleware('permission:reportes.ver');
+        Route::get('clientes', [ReporteController::class, 'clientes'])->middleware('permission:reportes.ver');
     });
 
     Route::prefix('auditoria')->middleware('auth:sanctum')->group(function (): void {
