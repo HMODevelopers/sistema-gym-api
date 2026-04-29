@@ -10,6 +10,7 @@ use App\Http\Controllers\Api\V1\MembresiaController;
 use App\Http\Controllers\Api\V1\MetodoPagoController;
 use App\Http\Controllers\Api\V1\PagoController;
 use App\Http\Controllers\Api\V1\PlanController;
+use App\Http\Controllers\Api\V1\RecepcionController;
 use App\Http\Controllers\Api\V1\SucursalController;
 use Illuminate\Support\Facades\Route;
 
@@ -119,6 +120,12 @@ Route::prefix('v1')->group(function (): void {
         Route::get('/', [AccesoController::class, 'index'])->middleware('permission:accesos.ver');
         Route::get('{acceso}', [AccesoController::class, 'show'])->middleware('permission:accesos.ver');
         Route::post('validar', [AccesoController::class, 'validar'])->middleware('permission:accesos.validar');
+    });
+
+
+    Route::prefix('recepcion')->middleware('auth:sanctum')->group(function (): void {
+        Route::get('clientes/buscar', [RecepcionController::class, 'buscarClientes'])->middleware('permission:clientes.ver');
+        Route::get('clientes/{cliente}/resumen', [RecepcionController::class, 'resumenCliente'])->middleware('permission:clientes.ver');
     });
 
     Route::prefix('auditoria')->middleware('auth:sanctum')->group(function (): void {
