@@ -5,6 +5,7 @@ use App\Http\Controllers\Api\V1\AuthController;
 use App\Http\Controllers\Api\V1\AuditoriaController;
 use App\Http\Controllers\Api\V1\BiometricoController;
 use App\Http\Controllers\Api\V1\ClienteController;
+use App\Http\Controllers\Api\V1\CorteCajaController;
 use App\Http\Controllers\Api\V1\DispositivoController;
 use App\Http\Controllers\Api\V1\MembresiaController;
 use App\Http\Controllers\Api\V1\MetodoPagoController;
@@ -96,6 +97,15 @@ Route::prefix('v1')->group(function (): void {
         Route::patch('{pago}/cancelar', [PagoController::class, 'cancelar'])->middleware('permission:pagos.cancelar');
     });
 
+
+
+    Route::prefix('cortes-caja')->middleware('auth:sanctum')->group(function (): void {
+        Route::get('/', [CorteCajaController::class, 'index'])->middleware('permission:pagos.ver');
+        Route::post('calcular', [CorteCajaController::class, 'calcular'])->middleware('permission:pagos.ver');
+        Route::post('/', [CorteCajaController::class, 'store'])->middleware('permission:pagos.registrar');
+        Route::get('{corte}', [CorteCajaController::class, 'show'])->middleware('permission:pagos.ver');
+        Route::patch('{corte}/cancelar', [CorteCajaController::class, 'cancelar'])->middleware('permission:pagos.cancelar');
+    });
 
     Route::prefix('dispositivos')->middleware('auth:sanctum')->group(function (): void {
         Route::get('/', [DispositivoController::class, 'index'])->middleware('permission:dispositivos.ver');
