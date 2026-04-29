@@ -56,3 +56,29 @@ If you discover a security vulnerability within Laravel, please send an e-mail t
 ## License
 
 The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+
+## Swagger / OpenAPI (API v1)
+
+Se agregaron anotaciones base OpenAPI en:
+
+- `app/OpenApi/V1Spec.php`
+- `app/OpenApi/V1Paths.php`
+
+### Instalación recomendada (si aún no está instalada)
+
+```bash
+composer require darkaonline/l5-swagger
+php artisan vendor:publish --provider "L5Swagger\\L5SwaggerServiceProvider"
+```
+
+### Configuración recomendada
+
+- UI: `/api/documentation`
+- Escaneo de anotaciones: carpeta `app/`
+- Seguridad: `sanctumBearer` (HTTP Bearer Token)
+
+### Regenerar documentación
+
+```bash
+php artisan l5-swagger:generate
+```
